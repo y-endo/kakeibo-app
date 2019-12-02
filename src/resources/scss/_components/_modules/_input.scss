@@ -1,0 +1,51 @@
+@charset "UTF-8";
+
+.input {
+  display: block;
+  box-sizing: border-box;
+  width: 100%;
+  height: 36px;
+  padding: 3px 5px;
+  color: $blue02;
+  background: #fff;
+  border: solid 1px $blue01;
+  border-radius: 0;
+  -webkit-appearance: none;
+
+  &::placeholder {
+    color: $blue01;
+  }
+
+  @include sp {
+    font-size: 1.6rem;
+  }
+
+  &[disabled] {
+    background: $blue01;
+    opacity: 0.5;
+  }
+}
+
+.input-submit {
+  display: block;
+  box-sizing: border-box;
+  width: 100%;
+  margin-top: 18px;
+  padding: 8px 0;
+  color: $blue02;
+  font-weight: bold;
+  font-size: 1.8rem;
+  text-align: center;
+  background-color: $white01;
+  border: solid 1px $blue02;
+  border-radius: 20px;
+  outline: none;
+  cursor: pointer;
+  -webkit-appearance: none;
+
+  &-caution {
+    color: $red01;
+    background: $red02;
+    border-color: $red01;
+  }
+}

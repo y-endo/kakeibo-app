@@ -1,0 +1,67 @@
+@charset "UTF-8";
+
+@for $i from 0 through 20 {
+  .u-pt-#{$i * 5} {
+    padding-top: #{$i * 5}px !important;
+  }
+
+  .u-pt-#{$i * 5}-pc {
+    @include pc {
+      padding-top: #{$i * 5}px !important;
+    }
+  }
+
+  .u-pt-#{$i * 5}-sp {
+    @include sp {
+      padding-top: #{$i * 5}px !important;
+    }
+  }
+
+  .u-pr-#{$i * 5} {
+    padding-right: #{$i * 5}px !important;
+  }
+
+  .u-pr-#{$i * 5}-pc {
+    @include pc {
+      padding-right: #{$i * 5}px !important;
+    }
+  }
+
+  .u-pr-#{$i * 5}-sp {
+    @include sp {
+      padding-right: #{$i * 5}px !important;
+    }
+  }
+
+  .u-pb-#{$i * 5} {
+    padding-bottom: #{$i * 5}px !important;
+  }
+
+  .u-pb-#{$i * 5}-pc {
+    @include pc {
+      padding-bottom: #{$i * 5}px !important;
+    }
+  }
+
+  .u-pb-#{$i * 5}-sp {
+    @include sp {
+      padding-bottom: #{$i * 5}px !important;
+    }
+  }
+
+  .u-pl-#{$i * 5} {
+    padding-left: #{$i * 5}px !important;
+  }
+
+  .u-pl-#{$i * 5}-pc {
+    @include pc {
+      padding-left: #{$i * 5}px !important;
+    }
+  }
+
+  .u-pl-#{$i * 5}-sp {
+    @include sp {
+      padding-left: #{$i * 5}px !important;
+    }
+  }
+}

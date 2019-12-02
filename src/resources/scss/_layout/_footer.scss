@@ -1,0 +1,18 @@
+@charset "UTF-8";
+
+#footer {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  z-index: 2;
+  box-sizing: border-box;
+  width: 100%;
+  height: $nav-height-pc;
+  padding: 0 15px;
+  background: $white01;
+  border-top: solid 1px $gray01;
+
+  @include sp {
+    height: $nav-height-sp;
+  }
+}

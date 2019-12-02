@@ -1,0 +1,59 @@
+@charset "UTF-8";
+
+.nav {
+  max-width: $block-width-pc;
+  height: 100%;
+  margin: auto;
+
+  &-list {
+    display: flex;
+    height: 100%;
+  }
+
+  &-list_item {
+    position: relative;
+    flex: 1;
+  }
+
+  &-button-container {
+    position: relative;
+    height: 100%;
+  }
+
+  &-button {
+    display: block;
+    width: 100%;
+    height: 100%;
+    color: $blue02;
+    font-weight: bold;
+    font-size: 1.4rem;
+    background-color: transparent;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    -webkit-appearance: button;
+    @include tap-highlight-none();
+
+    @include sp {
+      font-size: 1rem;
+    }
+
+    &[aria-selected='true'] {
+      color: $green01;
+    }
+
+    &_icon {
+      width: 36px;
+      fill: currentColor;
+
+      @include sp {
+        width: 24px;
+      }
+    }
+
+    &_text {
+      display: block;
+      margin-top: 3px;
+    }
+  }
+}

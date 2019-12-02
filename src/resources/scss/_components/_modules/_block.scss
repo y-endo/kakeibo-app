@@ -1,0 +1,64 @@
+@charset "UTF-8";
+
+@mixin block {
+  max-width: $block-width-pc;
+  margin: 0 auto;
+  padding: 40px 0;
+
+  @include sp {
+    width: $block-width-sp;
+  }
+
+  &:only-child {
+    padding-bottom: 0;
+  }
+
+  > *:first-child {
+    margin-top: 0;
+  }
+}
+
+.block-content {
+  position: relative;
+  z-index: 1;
+  box-sizing: border-box;
+  height: 100%;
+  padding: 40px 15px;
+  overflow: auto;
+  background: $base-color;
+  // overflow: hidden;
+  -webkit-overflow-scrolling: touch;
+
+  @include sp {
+    padding: 20px 15px;
+  }
+
+  > *:first-child {
+    margin-top: 0;
+  }
+
+  > *:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.block-box {
+  @include block;
+}
+
+.block-box-bg-alternate {
+  @include block;
+
+  width: calc(100% + 30px);
+  max-width: none;
+  margin-right: -15px;
+  margin-left: -15px;
+
+  @include sp {
+    width: calc(100% + 30px);
+  }
+
+  &:nth-child(even) {
+    background: $gray01;
+  }
+}

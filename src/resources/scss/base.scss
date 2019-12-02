@@ -1,0 +1,60 @@
+@charset "UTF-8";
+
+@import './variables';
+@import './_mixin/_media-query';
+
+@import './_reset';
+
+@font-face {
+  font-weight: normal;
+  font-family: Monda;
+  src: url('/assets/fonts/Monda-Regular.ttf') format('truetype');
+}
+
+@font-face {
+  font-weight: bold;
+  font-family: Monda;
+  src: url('/assets/fonts/Monda-Bold.ttf') format('truetype');
+}
+
+html,
+body {
+  min-width: 980px;
+  height: 100%;
+  min-height: 600px;
+  overscroll-behavior-y: none;
+  background: $blue02;
+
+  @include sp {
+    min-width: 0;
+  }
+}
+
+html {
+  font-size: 10px;
+  font-family: Monda, 'Hiragino Kaku Gothic ProN', 'ヒラギノ角ゴ ProN W3', メイリオ, sans-serif;
+}
+
+body {
+  color: $blue02;
+  font-size: 1.6rem;
+  line-height: 1.7;
+
+  @include sp {
+    font-size: 1.3rem;
+  }
+}
+
+#app {
+  position: relative;
+  height: 100%;
+}
+
+a {
+  text-decoration: none;
+}
+
+input,
+textarea {
+  font-family: Monda, 'Hiragino Kaku Gothic ProN', 'ヒラギノ角ゴ ProN W3', メイリオ, sans-serif;
+}

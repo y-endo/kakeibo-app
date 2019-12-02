@@ -1,0 +1,9 @@
+@charset "UTF-8";
+
+@for $i from 0 through 9 {
+  @for $j from 0 through 9 {
+    .u-fz-#{$i}_#{$j}rem {
+      font-size: #{$i + $j * 0.1}rem;
+    }
+  }
+}

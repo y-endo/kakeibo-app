@@ -1,0 +1,36 @@
+@charset "UTF-8";
+
+@for $i from 0 through 20 {
+  // width(px)
+  .u-w-#{$i * 50} {
+    width: #{$i * 50}px !important;
+  }
+
+  .u-w-#{$i * 50}-pc {
+    @include pc {
+      width: #{$i * 50}px !important;
+    }
+  }
+
+  .u-w-#{$i * 50}-sp {
+    @include sp {
+      width: #{$i * 50}px !important;
+    }
+  }
+  // width(%)
+  .u-w-#{$i * 5}p {
+    width: #{$i * 5}#{'%'} !important;
+  }
+
+  .u-w-#{$i * 5}p-pc {
+    @include pc {
+      width: #{$i * 5}#{'%'} !important;
+    }
+  }
+
+  .u-w-#{$i * 5}p-sp {
+    @include sp {
+      width: #{$i * 5}#{'%'} !important;
+    }
+  }
+}

@@ -1,0 +1,38 @@
+@charset "UTF-8";
+
+.title-lv1 {
+  margin-top: 30px;
+  font-weight: bold;
+  font-size: 2.2rem;
+  line-height: 1;
+
+  @include sp {
+    margin-top: 20px;
+  }
+}
+
+.title-lv2 {
+  margin-top: 30px;
+  font-weight: bold;
+  font-size: 1.8rem;
+  line-height: 1;
+
+  @include sp {
+    margin-top: 20px;
+  }
+}
+
+.title-page {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  color: $white01;
+  font-weight: bold;
+  font-size: 1.8rem;
+  text-align: center;
+
+  @include sp {
+    font-size: 1.6rem;
+  }
+}

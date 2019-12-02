@@ -1,0 +1,18 @@
+@charset "UTF-8";
+
+#header {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 2;
+  box-sizing: border-box;
+  width: 100%;
+  height: $header-height;
+  padding: 0 15px;
+  background: $blue02;
+
+  @include pwa {
+    height: $header-height-pwa;
+    padding-top: 30px;
+  }
+}

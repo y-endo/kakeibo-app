@@ -1,0 +1,17 @@
+@charset "UTF-8";
+
+#main {
+  box-sizing: border-box;
+  width: 100%;
+  height: 100%;
+  padding: $header-height 0 $nav-height-pc;
+  background: $blue02;
+
+  @include sp {
+    padding: $header-height 0 $nav-height-sp;
+  }
+
+  @include pwa {
+    padding: $header-height-pwa 0 $nav-height-sp;
+  }
+}

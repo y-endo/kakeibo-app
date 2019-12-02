@@ -1,0 +1,10 @@
+@charset "UTF-8";
+
+.header {
+  &-inner {
+    position: relative;
+    max-width: $block-width-pc;
+    height: 100%;
+    margin: 0 auto;
+  }
+}

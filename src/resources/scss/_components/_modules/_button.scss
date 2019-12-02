@@ -1,0 +1,40 @@
+@charset "UTF-8";
+
+@mixin header-button {
+  position: absolute;
+  top: 14px;
+  right: 0;
+  width: 22px;
+  height: 22px;
+  font-size: 0;
+  background-color: transparent;
+  background-repeat: no-repeat;
+  background-position: 0 0;
+  background-size: 100%;
+  border: none;
+  border-radius: 0;
+  outline: none;
+  cursor: pointer;
+  -webkit-appearance: none;
+}
+
+.button-search {
+  @include header-button();
+
+  background-image: url('#{$path-img}/icon-search.svg');
+}
+
+.button-refresh {
+  @include header-button();
+
+  right: auto;
+  left: 0;
+  background-image: url('#{$path-img}/icon-refresh.svg');
+}
+
+.button-close {
+  @include header-button();
+
+  background-image: url('#{$path-img}/icon-close.svg');
+  background-size: 95%;
+}
