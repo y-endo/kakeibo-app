@@ -7,23 +7,43 @@ const mode = process.env.NODE_ENV !== 'production' ? 'development' : 'production
 module.exports = {
   mode: mode,
   entry: {
-    app: './resources/js/index.js'
+    app: './src/ts/index.ts'
   },
   output: {
     filename: '[name].js',
-    path: path.join(__dirname, '../public/assets/js/')
+    path: path.join(__dirname, './public/assets/js/')
   },
   module: {
     rules: [
       {
         test: /\.vue$/,
         exclude: /node_modules/,
-        loader: 'vue-loader'
+        loader: 'vue-loader',
+        options: {
+          loaders: {
+            ts: [
+              {
+                loader: 'ts-loader',
+                options: {
+                  appendTsSuffixTo: [/\.vue$/]
+                }
+              }
+            ]
+          }
+        }
       },
       {
-        test: /\.js$/,
-        exclude: /node_modules/,
-        use: ['babel-loader']
+        test: /\.ts$/,
+        use: [
+          'babel-loader',
+          {
+            loader: 'ts-loader',
+            options: {
+              appendTsSuffixTo: [/\.vue$/]
+            }
+          }
+        ],
+        exclude: /node_modules/
       },
       {
         test: /\.scss/,
@@ -61,8 +81,9 @@ module.exports = {
   resolve: {
     alias: {
       vue$: 'vue/dist/vue.esm.js',
-      '@': path.resolve(__dirname, './resources')
-    }
+      '@': path.resolve(__dirname, './src')
+    },
+    extensions: ['', '.js', '.ts', '.vue']
   },
   optimization:
     mode === 'production'

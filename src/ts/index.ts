@@ -1,14 +1,18 @@
 import '@/scss/base.scss';
 import '@/scss/index.scss';
 
-import './plugins/firebase/index.js';
+import './plugins/firebase/index';
 import Vue from 'vue';
 import App from './App.vue';
-import Store from './Store/index.js';
-import Login from './plugins/Login/index.js';
-import DataManager from './plugins/DataManager/index.js';
-import { auth, messaging } from './plugins/firebase/index.js';
-import FirebaseCloudMessage from './plugins/FirebaseCloudMessage/index.js';
+import Store from './Store/index';
+import Login from './plugins/Login/index';
+import DataManager from './plugins/DataManager/index';
+import { auth, messaging } from './plugins/firebase/index';
+import FirebaseCloudMessage from './plugins/FirebaseCloudMessage/index';
+
+type UserName = {
+  [key: string]: string;
+};
 
 // サービスワーカー登録
 navigator.serviceWorker.register('/sw.js').then(registration => {
@@ -25,9 +29,11 @@ navigator.serviceWorker.register('/sw.js').then(registration => {
 });
 
 auth.onAuthStateChanged(user => {
-  if (!user) {
+  if (user === null) {
     Login.create();
     return;
+  } else {
+    user.email = user.email === null ? '' : user.email;
   }
 
   // プッシュ通知ポップアップ
@@ -44,7 +50,7 @@ auth.onAuthStateChanged(user => {
   // state初期化
   Store.initialize();
   Store.setLoginUser(user.email.split('@')[0]);
-  const userName = {
+  const userName: UserName = {
     yuki: '勇気',
     tomoe: '友恵',
     ikuma: '生真'

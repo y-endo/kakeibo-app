@@ -1,11 +1,13 @@
-import { database } from '@/js/plugins/firebase/index.js';
+import { database } from '@/ts/plugins/firebase/index.js';
 
 class DataRegister {
+  private isRegistering: boolean;
+
   constructor() {
     this.isRegistering = false;
   }
 
-  add(data) {
+  add(data: firebase.firestore.DocumentData): Promise<firebase.firestore.DocumentReference> | undefined {
     if (this.isRegistering) return;
     this.isRegistering = true;
     console.log('DataManager: DataRegister.add');
@@ -24,7 +26,7 @@ class DataRegister {
     });
   }
 
-  delete(document) {
+  delete(document: string): Promise<void> | undefined {
     if (this.isRegistering) return;
     this.isRegistering = true;
     console.log('DataManager: DataRegister.delete');
@@ -33,9 +35,9 @@ class DataRegister {
         .collection('data')
         .doc(document)
         .delete()
-        .then(result => {
+        .then(() => {
           this.isRegistering = false;
-          resolve(result);
+          resolve();
         })
         .catch(error => {
           this.isRegistering = false;
@@ -45,4 +47,4 @@ class DataRegister {
   }
 }
 
-export default new DataRegister();
+export default DataRegister;

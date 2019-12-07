@@ -1,6 +1,11 @@
-import { auth } from '@/js/plugins/firebase/index.js';
+import { auth } from '@/ts/plugins/firebase/index';
 
 class Login {
+  private root?: HTMLElement;
+  private html: string;
+  private isCreated: boolean;
+  private handleSubmitBind: (e: Event) => void;
+
   constructor() {
     this.html = `
       <div id="login">
@@ -32,17 +37,24 @@ class Login {
   }
 
   bind() {
-    this.root.querySelector('form').addEventListener('submit', this.handleSubmitBind);
+    if (this.root === null || this.root === void 0) return;
+
+    (this.root.querySelector('form') as HTMLElement).addEventListener('submit', this.handleSubmitBind);
   }
 
   unbind() {
-    this.root.querySelector('form').removeEventListener('submit', this.handleSubmitBind);
+    if (this.root === null || this.root === void 0) return;
+
+    (this.root.querySelector('form') as HTMLElement).removeEventListener('submit', this.handleSubmitBind);
   }
 
-  handleSubmit(e) {
+  handleSubmit(e: Event): void {
     e.preventDefault();
-    const email = e.currentTarget.querySelector('input[type="email"]').value;
-    const password = e.currentTarget.querySelector('input[type="password"]').value;
+    const currentTarget = <HTMLElement>e.currentTarget;
+    if (currentTarget === null) return;
+
+    const email = (currentTarget.querySelector('input[type="email"]') as HTMLInputElement).value;
+    const password = (currentTarget.querySelector('input[type="password"]') as HTMLInputElement).value;
 
     auth.signInWithEmailAndPassword(email, password).catch(() => {
       alert('違います。');
@@ -51,16 +63,18 @@ class Login {
 
   create() {
     document.body.insertAdjacentHTML('beforeend', this.html);
-    this.root = document.querySelector('#login');
+    this.root = <HTMLElement>document.querySelector('#login');
     this.bind();
     this.isCreated = true;
   }
 
   destroy() {
     if (!this.isCreated) return;
-    this.root.remove();
-    this.unbind();
-    this.isCreated = false;
+    if (!(this.root === null || this.root === void 0)) {
+      this.root.remove();
+      this.unbind();
+      this.isCreated = false;
+    }
   }
 }
 

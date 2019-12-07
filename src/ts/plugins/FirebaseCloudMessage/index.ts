@@ -1,15 +1,16 @@
-import firebaseConfig from '@/js/config/firebase.json';
-import { database } from '@/js/plugins/firebase/index.js';
-import { messaging } from '@/js/plugins/firebase/index.js';
-import Store from '@/js/Store/index.js';
+import firebaseConfig from '@/ts/config/firebase.json';
+import { database } from '@/ts/plugins/firebase/index';
+import { messaging } from '@/ts/plugins/firebase/index';
+import Store from '@/ts/Store/index';
 
 const FirebaseCloudMessage = () => {
   // 通知許可のポップアップ
   function requestPermission() {
-    messaging.requestPermission().then(() => {
-      messaging.usePublicVapidKey(firebaseConfig.publicVapidKey);
-      messaging.getToken().then(token => {
+    (messaging as firebase.messaging.Messaging).requestPermission().then(() => {
+      (messaging as firebase.messaging.Messaging).usePublicVapidKey(firebaseConfig.publicVapidKey);
+      (messaging as firebase.messaging.Messaging).getToken().then(token => {
         console.log('FirebaseCloudMessage - messaging.getToken():', token);
+        if (token === null) return;
         updateToken(token);
       });
     });
@@ -17,15 +18,16 @@ const FirebaseCloudMessage = () => {
 
   function bind() {
     // トークンの更新処理
-    messaging.onTokenRefresh(() => {
-      messaging.getToken().then(token => {
+    (messaging as firebase.messaging.Messaging).onTokenRefresh(() => {
+      (messaging as firebase.messaging.Messaging).getToken().then(token => {
         console.log('FirebaseCloudMessage - messaging.onTokenRefresh().getToken():', token);
+        if (token === null) return;
         updateToken(token);
       });
     });
 
     // メッセージの受信
-    messaging.onMessage(payload => {
+    (messaging as firebase.messaging.Messaging).onMessage(payload => {
       const title = payload.notification.title;
       const options = {
         body: payload.notification.body,
@@ -42,14 +44,14 @@ const FirebaseCloudMessage = () => {
    * ログインしているユーザーのトークンを更新する
    * @param {String} newToken 新しいトークン
    */
-  async function updateToken(newToken) {
+  async function updateToken(newToken: string) {
     const willUpdate = await database
       .collection('messaging')
       .doc('token')
       .get()
       .then(document => {
         // DBに登録されているトークンと異なる場合は更新
-        return document.data()[Store.state.loginUser] !== newToken ? true : false;
+        return (document.data() as firebase.firestore.DocumentData)[Store.state.loginUser] !== newToken ? true : false;
       });
 
     if (willUpdate) {

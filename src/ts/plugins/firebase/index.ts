@@ -2,7 +2,7 @@ import firebase from 'firebase/app';
 import 'firebase/auth';
 import 'firebase/firestore';
 import 'firebase/messaging';
-import firebaseConfig from '@/js/config/firebase.json';
+import firebaseConfig from '@/ts/config/firebase.json';
 
 if (firebase.apps.length === 0) {
   firebase.initializeApp(firebaseConfig);

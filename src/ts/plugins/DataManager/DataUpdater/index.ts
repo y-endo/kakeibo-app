@@ -1,6 +1,13 @@
 import moment from 'moment';
-import { database } from '@/js/plugins/firebase/index.js';
-import EventEmitter from '@/js/plugins/EventEmitter/index.js';
+import { database } from '@/ts/plugins/firebase/index.js';
+import EventEmitter from '@/ts/plugins/EventEmitter/index.js';
+
+export type UpdateHomeDataOption = {
+  money: number;
+  payment: string;
+  date: string;
+  user: string;
+};
 
 class DataUpdater {
   constructor() {}
@@ -14,7 +21,7 @@ class DataUpdater {
     });
   }
 
-  update(id, newValue) {
+  update(id: string, newValue: firebase.firestore.UpdateData): Promise<void> {
     console.log('DataManager: DataUpdater.update');
     return new Promise((resolve, reject) => {
       database
@@ -30,7 +37,7 @@ class DataUpdater {
     });
   }
 
-  resetHomeData(type) {
+  resetHomeData(type: string): Promise<void> | undefined {
     console.log('DataManager: DataUpdater.resetHomeData', type);
     if (type === 'day') {
       return database
@@ -48,9 +55,10 @@ class DataUpdater {
           credit: { all: 0, yuki: 0, tomoe: 0, ikuma: 0 }
         });
     }
+    return;
   }
 
-  updateHomeData(newValue) {
+  updateHomeData(newValue: UpdateHomeDataOption) {
     console.log('DataManager: DataUpdater.updateHomeData');
     // 登録されたデータが今月のものじゃない
     if (
@@ -64,7 +72,7 @@ class DataUpdater {
       return;
 
     return new Promise((resolve, reject) => {
-      const user = {
+      const user: { [key: string]: string } = {
         勇気: 'yuki',
         友恵: 'tomoe',
         生真: 'ikuma'
@@ -80,6 +88,11 @@ class DataUpdater {
           const currentData = document.data();
 
           console.log(document.data());
+
+          if (currentData === void 0) {
+            reject();
+            return;
+          }
 
           if (['ポイント', 'ICカード', 'ギフト'].includes(newValue.payment)) {
             currentData.emoney.all += newValue.money;
@@ -120,4 +133,4 @@ class DataUpdater {
   }
 }
 
-export default new DataUpdater();
+export default DataUpdater;
