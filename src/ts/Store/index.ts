@@ -1,21 +1,8 @@
+import { StoreEventType, StoreInterface } from 'type/index';
 import EventEmitter from '@/ts/plugins/EventEmitter/index';
 
-export interface StoreState {
-  page: string;
-  isModalOpen: boolean;
-  loginUser: string;
-  loginUserName: string;
-  isMessageShow: boolean;
-  messageText: string;
-  messageType: string;
-}
-
-export type StoreEvent = {
-  state: keyof StoreState;
-};
-
-class Store {
-  public state: StoreState;
+class Store implements StoreInterface {
+  public state: StoreInterface['state'];
 
   constructor() {
     this.state = {
@@ -35,37 +22,37 @@ class Store {
 
   setPage(value: string): void {
     this.state.page = value;
-    EventEmitter.emit('SET_PAGE', <StoreEvent>{ state: 'page' });
+    EventEmitter.emit('SET_PAGE', { state: 'page' } as StoreEventType);
   }
 
   setIsModalOpen(value: boolean): void {
     this.state.isModalOpen = value;
-    EventEmitter.emit('SET_IS_MODAL_OPEN', <StoreEvent>{ state: 'isModalOpen' });
+    EventEmitter.emit('SET_IS_MODAL_OPEN', { state: 'isModalOpen' } as StoreEventType);
   }
 
   setLoginUser(value: string): void {
     this.state.loginUser = value;
-    EventEmitter.emit('SET_LOGIN_USER', <StoreEvent>{ state: 'loginUser' });
+    EventEmitter.emit('SET_LOGIN_USER', { state: 'loginUser' } as StoreEventType);
   }
 
   setLoginUserName(value: string): void {
     this.state.loginUserName = value;
-    EventEmitter.emit('SET_LOGIN_USER_NAME', <StoreEvent>{ state: 'loginUserName' });
+    EventEmitter.emit('SET_LOGIN_USER_NAME', { state: 'loginUserName' } as StoreEventType);
   }
 
   setIsMessageShow(value: boolean): void {
     this.state.isMessageShow = value;
-    EventEmitter.emit('SET_IS_MESSAGE_SHOW', <StoreEvent>{ state: 'isMessageShow' });
+    EventEmitter.emit('SET_IS_MESSAGE_SHOW', { state: 'isMessageShow' } as StoreEventType);
   }
 
   setMessageType(value: string): void {
     this.state.messageType = value;
-    EventEmitter.emit('SET_MESSAGE_TYPE', <StoreEvent>{ state: 'messageType' });
+    EventEmitter.emit('SET_MESSAGE_TYPE', { state: 'messageType' } as StoreEventType);
   }
 
   setMessageText(value: string): void {
     this.state.messageText = value;
-    EventEmitter.emit('SET_MESSAGE_TEXT', <StoreEvent>{ state: 'messageText' });
+    EventEmitter.emit('SET_MESSAGE_TEXT', { state: 'messageText' } as StoreEventType);
   }
 }
 

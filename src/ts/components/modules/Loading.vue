@@ -10,14 +10,12 @@
   </transition>
 </template>
 
-<script>
-export default {
-  name: 'ModuleLoading',
-  props: {
-    isShow: {
-      type: Boolean,
-      default: () => true
-    }
-  }
-};
+<script lang="ts">
+import { Component, Prop, Vue } from 'vue-property-decorator';
+
+@Component
+export default class ModuleLoading extends Vue {
+  @Prop({ type: Boolean, default: true })
+  private isShow!: boolean;
+}
 </script>

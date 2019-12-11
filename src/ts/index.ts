@@ -22,7 +22,7 @@ navigator.serviceWorker.register('/sw.js').then(registration => {
   }
 
   // サービスワーカーのアップデート確認
-  registration.onupdatefound = () => {
+  registration.onupdatefound = (): void => {
     console.log('ServiceWorker update found.');
     registration.update();
   };

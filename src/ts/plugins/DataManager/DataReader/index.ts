@@ -1,24 +1,7 @@
+import { GetDocumentsOption } from 'type/index';
 import { database } from '@/ts/plugins/firebase/index.js';
 
-export type Where = {
-  key: string | firebase.firestore.FieldPath;
-  operator: firebase.firestore.WhereFilterOp;
-  value: any;
-};
-
-export type OrderBy = {
-  key: string | firebase.firestore.FieldPath;
-  sort: firebase.firestore.OrderByDirection;
-};
-
-export type GetDocumentsOption = {
-  where: Where[];
-  orderBy: OrderBy[];
-};
-
 class DataReader {
-  constructor() {}
-
   public getDocument(id: string): Promise<firebase.firestore.DocumentData> {
     console.log('DataManager: DataReader.getDocument', id);
     return new Promise((resolve, reject) => {
@@ -35,7 +18,7 @@ class DataReader {
     });
   }
 
-  public getDocuments(option: GetDocumentsOption) {
+  public getDocuments(option: GetDocumentsOption): Promise<firebase.firestore.DocumentData[]> {
     console.log('DataManager: DataReader.getDocuments', option);
     return new Promise(resolve => {
       const documents: firebase.firestore.DocumentData[] = [];
@@ -68,7 +51,7 @@ class DataReader {
     });
   }
 
-  public getHomeData() {
+  public getHomeData(): Promise<firebase.firestore.DocumentData> {
     console.log('DataManager: DataReader.getHomeData');
     return new Promise(resolve => {
       const query = database.collection('home').doc('expenditure');

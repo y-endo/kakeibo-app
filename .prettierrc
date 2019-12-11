@@ -4,13 +4,5 @@
   "singleQuote": true,
   "bracketSpacing": true,
   "tabWidth": 2,
-  "useTabs": false,
-  "overrides": [
-    {
-      "files": ".babelrc",
-      "options": {
-        "parser": "json"
-      }
-    }
-  ]
+  "useTabs": false
 }

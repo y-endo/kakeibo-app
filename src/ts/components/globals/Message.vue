@@ -6,55 +6,56 @@
   </transition>
 </template>
 
-<script>
-import EventEmitter from '@/js/plugins/EventEmitter/index.js';
-import Store from '@/js/Store/index.js';
+<script lang="ts">
+import { Component, Vue } from 'vue-property-decorator';
+import EventEmitter from '@/ts/plugins/EventEmitter/index';
+import Store from '@/ts/Store/index';
 
-export default {
-  name: 'GlobalMessage',
-  data: function() {
-    return {
-      isShow: false,
-      isError: false,
-      text: '',
-      timerId: -1
-    };
-  },
-  created() {
+@Component
+export default class GlobalMessage extends Vue {
+  private isShow = false;
+  private isError = false;
+  private text = '';
+  private timerId?: NodeJS.Timeout;
+
+  created(): void {
     EventEmitter.on('SET_MESSAGE_TEXT', this.changeText);
     EventEmitter.on('SET_IS_MESSAGE_SHOW', this.changeIsShow);
     EventEmitter.on('SET_MESSAGE_TYPE', this.changeType);
-  },
-  methods: {
-    changeText() {
-      this.text = Store.state.messageText;
-    },
-    changeIsShow() {
-      if (Store.state.isMessageShow) {
-        this.show();
-      } else {
-        this.hide();
-      }
-    },
-    changeType() {
-      this.isError = false;
+  }
 
-      if (Store.state.messageType === 'error') {
-        this.isError = true;
-      }
-    },
-    show() {
-      this.isShow = true;
+  changeText(): void {
+    this.text = Store.state.messageText;
+  }
 
-      // 5秒経って消えてなかったら消す
-      clearTimeout(this.timerId);
-      this.timerId = setTimeout(() => {
-        if (this.isShow) this.hide();
-      }, 5000);
-    },
-    hide() {
-      this.isShow = false;
+  changeIsShow(): void {
+    if (Store.state.isMessageShow) {
+      this.show();
+    } else {
+      this.hide();
     }
   }
-};
+
+  changeType(): void {
+    this.isError = false;
+
+    if (Store.state.messageType === 'error') {
+      this.isError = true;
+    }
+  }
+
+  show(): void {
+    this.isShow = true;
+
+    // 5秒経って消えてなかったら消す
+    if (this.timerId !== void 0) clearTimeout(this.timerId);
+    this.timerId = setTimeout(() => {
+      if (this.isShow) this.hide();
+    }, 5000);
+  }
+
+  hide(): void {
+    this.isShow = false;
+  }
+}
 </script>

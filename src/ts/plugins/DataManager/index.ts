@@ -14,4 +14,6 @@ class DataManager {
   }
 }
 
-export default new DataManager();
+const dataManager = new DataManager();
+
+export default dataManager;

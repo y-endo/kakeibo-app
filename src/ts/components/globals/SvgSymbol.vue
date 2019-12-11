@@ -64,7 +64,8 @@
 </template>
 
 <script>
-export default {
-  name: 'GlobalSvgSymbol'
-};
+import { Component, Vue } from 'vue-property-decorator';
+
+@Component
+export default class GlobalSvgSymbol extends Vue {}
 </script>

@@ -2,7 +2,7 @@ import moment from 'moment';
 import { database } from '@/ts/plugins/firebase/index.js';
 import EventEmitter from '@/ts/plugins/EventEmitter/index.js';
 
-export type UpdateHomeDataOption = {
+type UpdateHomeDataOption = {
   money: number;
   payment: string;
   date: string;
@@ -10,9 +10,7 @@ export type UpdateHomeDataOption = {
 };
 
 class DataUpdater {
-  constructor() {}
-
-  watch() {
+  watch(): void {
     database.collection('home').onSnapshot(() => {
       EventEmitter.emit('DATABASE_HOME_UPDATE');
     });
@@ -58,7 +56,7 @@ class DataUpdater {
     return;
   }
 
-  updateHomeData(newValue: UpdateHomeDataOption) {
+  updateHomeData(newValue: UpdateHomeDataOption): Promise<void> | undefined {
     console.log('DataManager: DataUpdater.updateHomeData');
     // 登録されたデータが今月のものじゃない
     if (

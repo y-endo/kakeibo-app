@@ -63,21 +63,23 @@
   </footer>
 </template>
 
-<script>
-import Store from '@/js/Store/index.js';
+<script lang="ts">
+import { Component, Prop, Vue } from 'vue-property-decorator';
+import Store from '@/ts/Store/index';
 
-export default {
-  name: 'GlobalFooter',
-  props: {
-    page: {
-      type: String,
-      default: () => ''
-    }
-  },
-  methods: {
-    changeTabPanel(e) {
-      Store.setPage(e.currentTarget.getAttribute('aria-controls').replace('page-', ''));
-    }
+@Component
+export default class GlobalFooter extends Vue {
+  @Prop({ type: String, default: '' })
+  private page!: string;
+
+  changeTabPanel(e: UIEvent): void {
+    const currentTarget = e.currentTarget;
+    if (currentTarget === null) return;
+
+    const ariaControls = (currentTarget as HTMLElement).getAttribute('aria-controls');
+    if (ariaControls === null) return;
+
+    Store.setPage(ariaControls.replace('page-', ''));
   }
-};
+}
 </script>

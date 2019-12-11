@@ -45,49 +45,60 @@
   </div>
 </template>
 
-<script>
-export default {
-  name: 'ModuleHistoryList',
-  props: {
-    date: {
-      type: String,
-      default: () => ''
-    },
-    itemData: {
-      type: Array,
-      default: () => []
-    }
-  },
-  computed: {
-    dateString() {
-      const dateArray = this.date.split('-');
-      return {
-        year: dateArray[0],
-        month: dateArray[1],
-        day: dateArray[2]
-      };
-    },
-    totalExpense() {
-      let result = 0;
-      this.itemData.forEach(item => {
-        if (item.sign !== 'minus' || ['ポイント', 'ICカード', 'ギフト'].includes(item.payment)) return;
-        result -= item.money;
-      });
-      return result;
-    },
-    totalIncome() {
-      let result = 0;
-      this.itemData.forEach(item => {
-        if (item.sign === 'minus' || item.category === '貯蓄') return;
-        result += item.money;
-      });
-      return result;
-    }
-  },
-  methods: {
-    handleClick(e, data) {
-      this.$emit('list-click', { event: e, data: data });
-    }
-  }
+<script lang="ts">
+import { Component, Prop, Emit, Vue } from 'vue-property-decorator';
+
+type HistoryItem = {
+  category: string;
+  subCategory: string;
+  date: string;
+  memo: string;
+  money: number;
+  payment: string;
+  pubDate: number;
+  sign: string;
+  user: string;
 };
+
+@Component
+export default class ModuleHistoryList extends Vue {
+  @Prop({ type: String, default: '' })
+  private date!: string;
+
+  @Prop({ type: Array, default: [] })
+  private itemData!: HistoryItem[];
+
+  private get dateString(): { year: string; month: string; day: string } {
+    const dateArray = this.date.split('-');
+
+    return {
+      year: dateArray[0],
+      month: dateArray[1],
+      day: dateArray[2]
+    };
+  }
+
+  private get totalExpense(): number {
+    let result = 0;
+    this.itemData.forEach(item => {
+      if (item.sign !== 'minus' || ['ポイント', 'ICカード', 'ギフト'].includes(item.payment)) return;
+      result -= item.money;
+    });
+    return result;
+  }
+
+  private get totalIncome(): number {
+    let result = 0;
+    this.itemData.forEach(item => {
+      if (item.sign === 'minus' || item.category === '貯蓄') return;
+      result += item.money;
+    });
+    return result;
+  }
+
+  @Emit()
+  listClick(event: UIEvent, data: HistoryItem): { event: UIEvent; data: HistoryItem } {
+    return { event, data };
+  }
+}
 </script>

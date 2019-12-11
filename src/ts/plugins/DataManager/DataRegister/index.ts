@@ -7,11 +7,15 @@ class DataRegister {
     this.isRegistering = false;
   }
 
-  add(data: firebase.firestore.DocumentData): Promise<firebase.firestore.DocumentReference> | undefined {
-    if (this.isRegistering) return;
-    this.isRegistering = true;
-    console.log('DataManager: DataRegister.add');
+  add(data: firebase.firestore.DocumentData): Promise<firebase.firestore.DocumentReference> {
     return new Promise((resolve, reject) => {
+      if (this.isRegistering) {
+        resolve();
+        return;
+      }
+      this.isRegistering = true;
+      console.log('DataManager: DataRegister.add');
+
       database
         .collection('data')
         .add(data)
@@ -26,11 +30,15 @@ class DataRegister {
     });
   }
 
-  delete(document: string): Promise<void> | undefined {
-    if (this.isRegistering) return;
-    this.isRegistering = true;
-    console.log('DataManager: DataRegister.delete');
+  delete(document: string): Promise<void> {
     return new Promise((resolve, reject) => {
+      if (this.isRegistering) {
+        resolve();
+        return;
+      }
+      this.isRegistering = true;
+      console.log('DataManager: DataRegister.delete');
+
       database
         .collection('data')
         .doc(document)

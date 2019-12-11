@@ -132,111 +132,131 @@
   </form>
 </template>
 
-<script>
+<script lang="ts">
+import { Component, Emit, Watch, Vue } from 'vue-property-decorator';
+import { Where, OrderBy, DocumentsFilter } from 'type/index';
 import moment from 'moment';
-import categoryProps from '@/js/config/categoryProps.json';
-import ModuleSelect from '@/js/components/modules/Select.vue';
-import Store from '@/js/Store/index.js';
+import categoryProps from '@/ts/config/categoryProps.json';
+import ModuleSelect from '@/ts/components/modules/Select.vue';
+import Store from '@/ts/Store/index';
 
-export default {
-  name: 'ModuleSearchForm',
+type Query = {
+  where: Where[];
+  orderBy: OrderBy[];
+};
+
+type SearchQuery = {
+  query: Query;
+  filter: DocumentsFilter;
+};
+
+@Component({
   components: {
     ModuleSelect
-  },
-  data: function() {
-    return {
-      startDate: moment()
-        .subtract(7, 'days')
-        .format('YYYY-MM-DD'),
-      endDate: moment().format('YYYY-MM-DD'),
-      minMoney: 0,
-      maxMoney: null,
-      category: [],
-      subCategory: [],
-      payment: [],
-      memo: '',
-      user: [Store.state.loginUserName],
-      categoryOptions: categoryProps.main,
-      paymentOptions: ['現金', 'クレジットカード', '振込', 'ポイント', 'ICカード', 'ギフト'],
-      userOptions: ['勇気', '友恵', '生真']
-    };
-  },
-  computed: {
-    subCategoryOptions: function() {
-      if (this.category.length === 0) return [];
-      let value = [];
-      this.category.forEach(category => {
-        value = value.concat(categoryProps.sub[category]);
-      });
-      return value;
-    }
-  },
-  watch: {
-    category: function() {
-      this.subCategory = [];
-    }
-  },
-  methods: {
-    handleSubmit(e) {
-      e.preventDefault();
-
-      const dayDiff = moment(this.endDate).diff(moment(this.startDate), 'days');
-      if (dayDiff > 31) {
-        Store.setMessageText(`エラー: 日付範囲が"${dayDiff}"日分です。 一度に取得できるデータは"31"日分です。`);
-        Store.setMessageType('error');
-        Store.setIsMessageShow(true);
-        return;
-      }
-
-      const where = [{ key: 'date', operator: '>=', value: this.startDate }, { key: 'date', operator: '<=', value: this.endDate }];
-      const filter = {};
-
-      // 最小金額
-      const minMoney = parseInt(this.minMoney);
-      if (!isNaN(minMoney) && typeof minMoney === 'number' && minMoney >= 0) {
-        filter.minMoney = minMoney;
-      }
-
-      // 最大金額
-      const maxMoney = parseInt(this.maxMoney);
-      if (!isNaN(maxMoney) && typeof maxMoney === 'number' && maxMoney >= 0) {
-        filter.maxMoney = maxMoney;
-      }
-
-      // カテゴリ
-      if (this.category.length > 0) {
-        filter.category = this.category;
-      }
-
-      // サブカテゴリ
-      if (this.subCategory.length > 0) {
-        filter.subCategory = this.subCategory;
-      }
-
-      // 支払い方法
-      if (this.payment.length > 0) {
-        filter.payment = this.payment;
-      }
-
-      // メモ
-      if (this.memo !== '') {
-        filter.memo = this.memo;
-      }
-
-      // 利用者
-      if (this.user.length > 0) {
-        where.push({ key: 'user', operator: '==', value: this.user[0] });
-      }
-
-      const query = {
-        where: where,
-        orderBy: [{ key: 'date', sort: 'desc' }, { key: 'pubDate', sort: 'desc' }]
-      };
-
-      this.$emit('search-query', { query: query, filter: filter });
-
-      Store.setIsModalOpen(false);
-    }
   }
-};
+})
+export default class ModuleSearchForm extends Vue {
+  private startDate = moment()
+    .subtract(7, 'days')
+    .format('YYYY-MM-DD');
+  private endDate = moment().format('YYYY-MM-DD');
+  private minMoney = 0;
+  private maxMoney = null;
+  private category = [];
+  private subCategory = [];
+  private payment = [];
+  private memo = '';
+  private user = [Store.state.loginUserName];
+  private categoryOptions = categoryProps.main;
+  private paymentOptions = ['現金', 'クレジットカード', '振込', 'ポイント', 'ICカード', 'ギフト'];
+  private userOptions = ['勇気', '友恵', '生真'];
+
+  get subCategoryOptions(): string[] {
+    if (this.category.length === 0) return [];
+
+    let value: string[] = [];
+    this.category.forEach(category => {
+      value = value.concat(categoryProps.sub[category]);
+    });
+    return value;
+  }
+
+  @Watch('category')
+  handleWatchCategory(): void {
+    this.subCategory = [];
+  }
+
+  @Emit('search-query')
+  private searchQuery(value: SearchQuery): SearchQuery {
+    return value;
+  }
+
+  handleSubmit(e: Event): void {
+    e.preventDefault();
+
+    const dayDiff = moment(this.endDate).diff(moment(this.startDate), 'days');
+    if (dayDiff > 31) {
+      Store.setMessageText(`エラー: 日付範囲が"${dayDiff}"日分です。 一度に取得できるデータは"31"日分です。`);
+      Store.setMessageType('error');
+      Store.setIsMessageShow(true);
+      return;
+    }
+
+    const where: Where[] = [
+      { key: 'date', operator: '>=', value: this.startDate },
+      { key: 'date', operator: '<=', value: this.endDate }
+    ];
+    const filter: DocumentsFilter = {};
+
+    // 最小金額
+    const minMoney = parseInt(String(this.minMoney));
+    if (!isNaN(minMoney) && typeof minMoney === 'number' && minMoney >= 0) {
+      filter.minMoney = minMoney;
+    }
+
+    // 最大金額
+    const maxMoney = parseInt(String(this.maxMoney));
+    if (!isNaN(maxMoney) && typeof maxMoney === 'number' && maxMoney >= 0) {
+      filter.maxMoney = maxMoney;
+    }
+
+    // カテゴリ
+    if (this.category.length > 0) {
+      filter.category = this.category;
+    }
+
+    // サブカテゴリ
+    if (this.subCategory.length > 0) {
+      filter.subCategory = this.subCategory;
+    }
+
+    // 支払い方法
+    if (this.payment.length > 0) {
+      filter.payment = this.payment;
+    }
+
+    // メモ
+    if (this.memo !== '') {
+      filter.memo = this.memo;
+    }
+
+    // 利用者
+    if (this.user.length > 0) {
+      where.push({ key: 'user', operator: '==', value: this.user[0] });
+    }
+
+    const orderBy: OrderBy[] = [
+      { key: 'date', sort: 'desc' },
+      { key: 'pubDate', sort: 'desc' }
+    ];
+    const query: Query = {
+      where,
+      orderBy
+    };
+
+    this.searchQuery({ query, filter });
+
+    Store.setIsModalOpen(false);
+  }
+}
 </script>

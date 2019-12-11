@@ -105,356 +105,351 @@
   </form>
 </template>
 
-<script>
+<script lang="ts">
+import { Component, Prop, Emit, Watch, Vue } from 'vue-property-decorator';
 import moment from 'moment';
-import DataManager from '@/js/plugins/DataManager/index.js';
-import ModuleSelect from '@/js/components/modules/Select.vue';
-import ModuleLoading from '@/js/components/modules/Loading.vue';
-import categoryProps from '@/js/config/categoryProps.json';
-import Store from '@/js/Store/index.js';
+import DataManager from '@/ts/plugins/DataManager/index';
+import ModuleSelect from '@/ts/components/modules/Select.vue';
+import ModuleLoading from '@/ts/components/modules/Loading.vue';
+import categoryProps from '@/ts/config/categoryProps.json';
+import Store from '@/ts/Store/index';
 
-export default {
-  name: 'ModuleInputForm',
+type CategoryProps = {
+  main: string[];
+  sub: {
+    [key: string]: string[];
+  };
+};
+
+@Component({
   components: {
     ModuleSelect,
     ModuleLoading
-  },
-  props: {
-    id: {
-      type: String,
-      default: () => ''
-    },
-    money: {
-      type: Number,
-      default: () => 0
-    },
-    category: {
-      type: Array,
-      default: () => []
-    },
-    subCategory: {
-      type: Array,
-      default: () => []
-    },
-    payment: {
-      type: Array,
-      default: () => []
-    },
-    date: {
-      type: String,
-      default: () => moment().format('YYYY-MM-DD')
-    },
-    memo: {
-      type: String,
-      default: () => ''
-    },
-    user: {
-      type: Array,
-      default: () => []
-    },
-    isEdit: {
-      type: Boolean,
-      default: () => false
-    },
-    isWatchEnable: {
-      type: Boolean,
-      default: () => true
-    },
-    hasDelete: {
-      type: Boolean,
-      default: () => false
+  }
+})
+export default class ModuleInputForm extends Vue {
+  private categoryOptions = (categoryProps as CategoryProps).main;
+  private paymentOptions = ['現金', 'クレジットカード', '振込', 'ポイント', 'ICカード', 'ギフト'];
+  private userOptions = ['勇気', '友恵', '生真'];
+  private isLoading = false;
+
+  @Prop({ type: String, default: '' })
+  private id!: string;
+
+  @Prop({ type: Number, default: 0 })
+  private money!: number;
+
+  @Prop({ type: Array, default: [] })
+  private category!: string[];
+
+  @Prop({ type: Array, default: [] })
+  private subCategory!: string[];
+
+  @Prop({ type: Array, default: [] })
+  private payment!: string[];
+
+  @Prop({ type: String, default: moment().format('YYYY-MM-DD') })
+  private date!: string;
+
+  @Prop({ type: String, default: '' })
+  private memo!: string;
+
+  @Prop({ type: Array, default: [] })
+  private user!: string[];
+
+  @Prop({ type: Boolean, default: false })
+  private isEdit!: boolean;
+
+  @Prop({ type: Boolean, default: true })
+  private isWatchEnable!: boolean;
+
+  @Prop({ type: Boolean, default: false })
+  private hasDelete!: boolean;
+
+  @Emit('input-money')
+  private inputMoney(value: number): number {
+    return value;
+  }
+
+  private get internalMoney(): string | number {
+    return this.money;
+  }
+  private set internalMoney(newValue: string | number) {
+    if (String(this.money) !== newValue) this.inputMoney(parseInt(newValue as string, 10));
+  }
+
+  private get internalCategory(): string[] {
+    return this.category;
+  }
+  private set internalCategory(newValue: string[]) {
+    if (this.category !== newValue) this.$emit('input-category', newValue);
+  }
+
+  private get internalSubCategory(): string[] {
+    return this.subCategory;
+  }
+  private set internalSubCategory(newValue: string[]) {
+    if (this.subCategory !== newValue) this.$emit('input-sub-category', newValue);
+  }
+
+  private get internalPayment(): string[] {
+    return this.payment;
+  }
+  private set internalPayment(newValue: string[]) {
+    if (this.payment !== newValue) this.$emit('input-payment', newValue);
+  }
+
+  private get internalDate(): string {
+    return this.date;
+  }
+  private set internalDate(newValue: string) {
+    if (this.date !== newValue) this.$emit('input-date', newValue);
+  }
+
+  private get internalMemo(): string {
+    return this.memo;
+  }
+  private set internalMemo(newValue: string) {
+    if (this.memo !== newValue) this.$emit('input-memo', newValue);
+  }
+
+  private get internalUser(): string[] {
+    return this.user;
+  }
+  private set internalUser(newValue: string[]) {
+    if (this.user !== newValue) this.$emit('input-user', newValue);
+  }
+
+  private get subCategoryOptions(): string[] {
+    return this.category.length === 0 ? [] : (categoryProps as CategoryProps).sub[this.category[0]];
+  }
+
+  @Watch('internalCategory')
+  handleWatchInternalCategory(): void {
+    if (!this.isWatchEnable) return;
+    this.internalSubCategory = [];
+  }
+
+  handleSubmit(e: Event): void {
+    e.preventDefault();
+
+    this.isLoading = true;
+
+    if (this.isEdit) {
+      this.updateData();
+    } else {
+      this.addData();
     }
-  },
-  data: function() {
-    return {
-      categoryOptions: categoryProps.main,
-      paymentOptions: ['現金', 'クレジットカード', '振込', 'ポイント', 'ICカード', 'ギフト'],
-      userOptions: ['勇気', '友恵', '生真'],
-      isLoading: false
-    };
-  },
-  computed: {
-    internalMoney: {
-      get() {
-        return this.money;
-      },
-      set(newValue) {
-        if (this.money !== newValue) this.$emit('input-money', parseInt(newValue, 10));
-      }
-    },
-    internalCategory: {
-      get() {
-        return this.category;
-      },
-      set(newValue) {
-        if (this.category !== newValue) this.$emit('input-category', newValue);
-      }
-    },
-    internalSubCategory: {
-      get() {
-        return this.subCategory;
-      },
-      set(newValue) {
-        if (this.subCategory !== newValue) this.$emit('input-sub-category', newValue);
-      }
-    },
-    internalPayment: {
-      get() {
-        return this.payment;
-      },
-      set(newValue) {
-        if (this.payment !== newValue) this.$emit('input-payment', newValue);
-      }
-    },
-    internalDate: {
-      get() {
-        return this.date;
-      },
-      set(newValue) {
-        if (this.date !== newValue) this.$emit('input-date', newValue);
-      }
-    },
-    internalMemo: {
-      get() {
-        return this.memo;
-      },
-      set(newValue) {
-        if (this.memo !== newValue) this.$emit('input-memo', newValue);
-      }
-    },
-    internalUser: {
-      get() {
-        return this.user;
-      },
-      set(newValue) {
-        if (this.user !== newValue) this.$emit('input-user', newValue);
-      }
-    },
-    subCategoryOptions: function() {
-      return this.category.length === 0 ? [] : categoryProps.sub[this.category[0]];
-    }
-  },
-  watch: {
-    internalCategory: function() {
-      if (!this.isWatchEnable) return;
-      this.internalSubCategory = [];
-    }
-  },
-  methods: {
-    handleSubmit(e) {
-      e.preventDefault();
+  }
 
-      this.isLoading = true;
+  addData(): void {
+    // 新規データ登録
+    DataManager.register
+      .add({
+        money: parseInt(String(this.money), 10),
+        category: this.category[0],
+        subCategory: this.subCategory[0],
+        payment: this.payment[0],
+        date: this.date,
+        user: this.user[0],
+        memo: this.memo,
+        sign: this.category[0] === '支出' ? 'minus' : 'plus',
+        pubDate: new Date().getTime(),
+        lastEditor: Store.state.loginUser
+      })
+      .then(() => {
+        Store.setMessageText('登録しました');
+        Store.setMessageType('');
+        Store.setIsMessageShow(true);
+        this.isLoading = false;
 
-      if (this.isEdit) {
-        this.updateData();
-      } else {
-        this.addData();
-      }
-    },
-    addData() {
-      // 新規データ登録
-      DataManager.register
-        .add({
-          money: parseInt(this.money, 10),
-          category: this.category[0],
-          subCategory: this.subCategory[0],
-          payment: this.payment[0],
-          date: this.date,
-          user: this.user[0],
-          memo: this.memo,
-          sign: this.category[0] === '支出' ? 'minus' : 'plus',
-          pubDate: new Date().getTime(),
-          lastEditor: Store.state.loginUser
-        })
-        .then(() => {
-          Store.setMessageText('登録しました');
-          Store.setMessageType('');
-          Store.setIsMessageShow(true);
-          this.isLoading = false;
+        // ホーム画面更新
+        if (this.category[0] === '支出') {
+          DataManager.updater.updateHomeData({
+            money: parseInt(String(this.money), 10),
+            payment: this.payment[0],
+            date: this.date,
+            user: this.user[0]
+          });
+        }
 
-          // ホーム画面更新
-          if (this.category[0] === '支出') {
-            DataManager.updater.updateHomeData({
-              money: parseInt(this.money, 10),
-              payment: this.payment[0],
-              date: this.date,
-              user: this.user[0]
-            });
-          }
-
-          this.internalMoney = '';
-          this.internalCategory = [];
-          this.internalSubCategory = [];
-          this.internalPayment = [];
-          this.internalMemo = '';
-        })
-        .catch(error => {
-          Store.setMessageText('エラー: 登録に失敗しました');
-          Store.setMessageType('error');
-          Store.setIsMessageShow(true);
-          this.isLoading = false;
-          console.error(error);
-        });
-
-      this.$el.querySelectorAll('.select_option-list-item').forEach(element => {
-        element.classList.remove('select_option-list-item--selected');
-      });
-    },
-    async updateData() {
-      // 更新対象のデータを取得
-      const data = await DataManager.reader.getDocument(this.id).catch(error => {
-        Store.setMessageText('エラー: データの読み込みに失敗しました。');
+        this.internalMoney = '';
+        this.internalCategory = [];
+        this.internalSubCategory = [];
+        this.internalPayment = [];
+        this.internalMemo = '';
+      })
+      .catch(error => {
+        Store.setMessageText('エラー: 登録に失敗しました');
         Store.setMessageType('error');
         Store.setIsMessageShow(true);
         this.isLoading = false;
         console.error(error);
-        return error;
       });
 
-      if (!data) return;
+    this.$el.querySelectorAll('.select_option-list-item').forEach(element => {
+      element.classList.remove('select_option-list-item--selected');
+    });
+  }
 
-      // データの更新
-      await DataManager.updater
-        .update(this.id, {
-          money: parseInt(this.money, 10),
-          category: this.category[0],
-          subCategory: this.subCategory[0],
-          payment: this.payment[0],
-          date: this.date,
-          user: this.user[0],
-          memo: this.memo,
-          sign: this.category[0] === '支出' ? 'minus' : 'plus',
-          pubDate: new Date().getTime(),
-          lastEditor: Store.state.loginUser
-        })
-        .then(() => {
-          Store.setMessageText('更新内容を登録しました');
-          Store.setMessageType('');
-          Store.setIsMessageShow(true);
-          this.isLoading = false;
-        })
-        .catch(error => {
-          Store.setMessageText('エラー: 更新内容の登録に失敗しました');
-          Store.setMessageType('error');
-          Store.setIsMessageShow(true);
-          this.isLoading = false;
-          console.error(error);
-        });
+  async updateData(): Promise<void> {
+    // 更新対象のデータを取得
+    const data = await DataManager.reader.getDocument(this.id).catch(error => {
+      Store.setMessageText('エラー: データの読み込みに失敗しました。');
+      Store.setMessageType('error');
+      Store.setIsMessageShow(true);
+      this.isLoading = false;
+      console.error(error);
+      return error;
+    });
 
-      // ホーム画面更新
-      if (data.user !== this.user[0]) {
-        // 利用者が変わった場合
-        if (data.category === '支出') {
-          // 元のデータが支出の場合
-          if (this.category[0] === '支出') {
-            // 変更後の大カテゴリが支出のまま
-            await DataManager.updater.updateHomeData({
-              money: -parseInt(data.money, 10),
-              payment: data.payment,
-              date: data.date,
-              user: data.user
-            });
+    if (!data) return;
 
-            DataManager.updater.updateHomeData({
-              money: parseInt(this.money, 10),
-              payment: this.payment[0],
-              date: this.date,
-              user: this.user[0]
-            });
-          } else {
-            // 変更後の大カテゴリが支出以外に変わった
-            DataManager.updater.updateHomeData({
-              money: -parseInt(data.money, 10),
-              payment: data.payment,
-              date: data.date,
-              user: data.user
-            });
-          }
+    // データの更新
+    await DataManager.updater
+      .update(this.id, {
+        money: parseInt(String(this.money), 10),
+        category: this.category[0],
+        subCategory: this.subCategory[0],
+        payment: this.payment[0],
+        date: this.date,
+        user: this.user[0],
+        memo: this.memo,
+        sign: this.category[0] === '支出' ? 'minus' : 'plus',
+        pubDate: new Date().getTime(),
+        lastEditor: Store.state.loginUser
+      })
+      .then(() => {
+        Store.setMessageText('更新内容を登録しました');
+        Store.setMessageType('');
+        Store.setIsMessageShow(true);
+        this.isLoading = false;
+      })
+      .catch(error => {
+        Store.setMessageText('エラー: 更新内容の登録に失敗しました');
+        Store.setMessageType('error');
+        Store.setIsMessageShow(true);
+        this.isLoading = false;
+        console.error(error);
+      });
+
+    // ホーム画面更新
+    if (data.user !== this.user[0]) {
+      // 利用者が変わった場合
+      if (data.category === '支出') {
+        // 元のデータが支出の場合
+        if (this.category[0] === '支出') {
+          // 変更後の大カテゴリが支出のまま
+          await DataManager.updater.updateHomeData({
+            money: -parseInt(data.money, 10),
+            payment: data.payment,
+            date: data.date,
+            user: data.user
+          });
+
+          DataManager.updater.updateHomeData({
+            money: parseInt(String(this.money), 10),
+            payment: this.payment[0],
+            date: this.date,
+            user: this.user[0]
+          });
         } else {
-          // 元のデータが支出以外の場合
-          if (this.category[0] === '支出') {
-            // 変更後の大カテゴリが支出に変わった
-            DataManager.updater.updateHomeData({
-              money: parseInt(this.money, 10),
-              payment: this.payment[0],
-              date: this.date,
-              user: this.user[0]
-            });
-          }
+          // 変更後の大カテゴリが支出以外に変わった
+          DataManager.updater.updateHomeData({
+            money: -parseInt(data.money, 10),
+            payment: data.payment,
+            date: data.date,
+            user: data.user
+          });
         }
       } else {
-        // 利用者は変わらずのままの場合
-        let calcMoney = 0;
-        if (data.category === '支出') {
-          // 元のデータが支出の場合
-          if (this.category[0] === '支出') {
-            // 元も変更後も支出の場合は、差分の金額を計算
-            calcMoney = parseInt(this.money, 10) - data.money;
-          } else {
-            // 変更後が支出以外の場合は、元の金額を減算
-            calcMoney = -parseInt(this.money, 10);
-          }
-        } else {
-          // 元のデータが支出以外の場合
-          if (this.category[0] === '支出') {
-            calcMoney = parseInt(this.money, 10);
-          } else {
-            // 元のデータが支出以外のデータで、変更後も支出以外であればスルー
-            return;
-          }
+        // 元のデータが支出以外の場合
+        if (this.category[0] === '支出') {
+          // 変更後の大カテゴリが支出に変わった
+          DataManager.updater.updateHomeData({
+            money: parseInt(String(this.money), 10),
+            payment: this.payment[0],
+            date: this.date,
+            user: this.user[0]
+          });
         }
-
-        DataManager.updater.updateHomeData({
-          money: calcMoney,
-          payment: this.payment[0],
-          date: this.date,
-          user: this.user[0]
-        });
       }
-    },
-    deleteData() {
-      this.isLoading = true;
+    } else {
+      // 利用者は変わらずのままの場合
+      let calcMoney = 0;
+      if (data.category === '支出') {
+        // 元のデータが支出の場合
+        if (this.category[0] === '支出') {
+          // 元も変更後も支出の場合は、差分の金額を計算
+          calcMoney = parseInt(String(this.money), 10) - data.money;
+        } else {
+          // 変更後が支出以外の場合は、元の金額を減算
+          calcMoney = -parseInt(String(this.money), 10);
+        }
+      } else {
+        // 元のデータが支出以外の場合
+        if (this.category[0] === '支出') {
+          calcMoney = parseInt(String(this.money), 10);
+        } else {
+          // 元のデータが支出以外のデータで、変更後も支出以外であればスルー
+          return;
+        }
+      }
 
-      DataManager.register
-        .delete(this.$el.id)
-        .then(() => {
-          Store.setMessageText('削除しました');
-          Store.setMessageType('');
-          Store.setIsMessageShow(true);
-          Store.setIsModalOpen(false);
-          this.isLoading = false;
-
-          // ホーム画面更新
-          if (this.category[0] === '支出') {
-            DataManager.updater.updateHomeData({
-              money: -parseInt(this.money, 10),
-              payment: this.payment[0],
-              date: this.date,
-              user: this.user[0]
-            });
-          }
-        })
-        .catch(() => {
-          Store.setMessageText('エラー: 削除に失敗しました');
-          Store.setMessageType('error');
-          Store.setIsMessageShow(true);
-          Store.setIsModalOpen(false);
-          this.isLoading = false;
-        });
-    },
-    setCategory(value) {
-      this.internalCategory = value;
-    },
-    setSubCategory(value) {
-      this.internalSubCategory = value;
-    },
-    setPayment(value) {
-      this.internalPayment = value;
-    },
-    setUser(value) {
-      this.internalUser = value;
+      DataManager.updater.updateHomeData({
+        money: calcMoney,
+        payment: this.payment[0],
+        date: this.date,
+        user: this.user[0]
+      });
     }
   }
-};
+
+  deleteData(): void {
+    this.isLoading = true;
+
+    DataManager.register
+      .delete(this.$el.id)
+      .then(() => {
+        Store.setMessageText('削除しました');
+        Store.setMessageType('');
+        Store.setIsMessageShow(true);
+        Store.setIsModalOpen(false);
+        this.isLoading = false;
+
+        // ホーム画面更新
+        if (this.category[0] === '支出') {
+          DataManager.updater.updateHomeData({
+            money: -parseInt(String(this.money), 10),
+            payment: this.payment[0],
+            date: this.date,
+            user: this.user[0]
+          });
+        }
+      })
+      .catch(() => {
+        Store.setMessageText('エラー: 削除に失敗しました');
+        Store.setMessageType('error');
+        Store.setIsMessageShow(true);
+        Store.setIsModalOpen(false);
+        this.isLoading = false;
+      });
+  }
+
+  setCategory(value: string[]): void {
+    this.internalCategory = value;
+  }
+
+  setSubCategory(value: string[]): void {
+    this.internalSubCategory = value;
+  }
+
+  setPayment(value: string[]): void {
+    this.internalPayment = value;
+  }
+
+  setUser(value: string[]): void {
+    this.internalUser = value;
+  }
+}
 </script>

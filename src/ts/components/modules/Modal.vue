@@ -30,79 +30,92 @@
   </div>
 </template>
 
-<script>
-import ModuleSearchForm from '@/js/components/modules/SearchForm.vue';
-import ModuleInputForm from '@/js/components/modules/InputForm.vue';
-import Store from '@/js/Store/index.js';
+<script lang="ts">
+import { Component, Prop, Emit, Vue } from 'vue-property-decorator';
+import ModuleSearchForm from '@/ts/components/modules/SearchForm.vue';
+import ModuleInputForm from '@/ts/components/modules/InputForm.vue';
+import Store from '@/ts/Store/index';
 
-export default {
-  name: 'ModuleModal',
+type EditDataType = {
+  id: string | null;
+  money: number | null;
+  category: string[] | [];
+  subCategory: string[] | [];
+  payment: string[] | [];
+  date: string;
+  memo: string;
+  user: string[] | [];
+};
+
+@Component({
   components: {
     ModuleSearchForm,
     ModuleInputForm
-  },
-  props: {
-    isInputFormWatchEnable: {
-      type: Boolean,
-      default: () => true
-    },
-    isOpen: {
-      type: Boolean,
-      default: () => false
-    },
-    modalType: {
-      type: String,
-      default: () => ''
-    },
-    top: {
-      type: Number,
-      default: () => 0
-    },
-    editData: {
-      type: Object,
-      default: () => {
-        return {
-          id: null,
-          money: null,
-          category: [],
-          subCategory: [],
-          payment: [],
-          date: '',
-          memo: '',
-          user: ''
-        };
-      }
-    }
-  },
-  methods: {
-    handleClick() {
-      Store.setIsModalOpen(false);
-      this.$emit('close-modal');
-    },
-    setSearchQuery(value) {
-      this.$emit('search-query', value);
-    },
-    inputMoney(value) {
-      this.$emit('input-money', value);
-    },
-    inputCategory(value) {
-      this.$emit('input-category', value);
-    },
-    inputSubCategory(value) {
-      this.$emit('input-sub-category', value);
-    },
-    inputPayment(value) {
-      this.$emit('input-payment', value);
-    },
-    inputDate(value) {
-      this.$emit('input-date', value);
-    },
-    inputMemo(value) {
-      this.$emit('input-memo', value);
-    },
-    inputUser(value) {
-      this.$emit('input-user', value);
-    }
   }
-};
+})
+export default class ModuleModal extends Vue {
+  @Prop({ type: Boolean, default: true })
+  private isInputFormWatchEnable!: boolean;
+
+  @Prop({ type: Boolean, default: false })
+  private isOpen!: boolean;
+
+  @Prop({ type: String, default: '' })
+  private modalType!: string;
+
+  @Prop({ type: Number, default: 0 })
+  private top!: number;
+
+  @Prop({
+    type: Object,
+    default: {
+      id: null,
+      money: null,
+      category: [],
+      subCategory: [],
+      payment: [],
+      date: '',
+      memo: '',
+      user: []
+    }
+  })
+  private editData!: EditDataType;
+
+  @Emit('close-modal')
+  private closeModal(): void {
+    return;
+  }
+
+  // @Emit('search-query')
+  // private searchQuery():
+
+  handleClick(): void {
+    Store.setIsModalOpen(false);
+    this.$emit('close-modal');
+  }
+  setSearchQuery(value): void {
+    this.$emit('search-query', value);
+  }
+  inputMoney(value): void {
+    this.$emit('input-money', value);
+  }
+  inputCategory(value): void {
+    this.$emit('input-category', value);
+  }
+  inputSubCategory(value): void {
+    this.$emit('input-sub-category', value);
+  }
+  inputPayment(value): void {
+    this.$emit('input-payment', value);
+  }
+  inputDate(value): void {
+    this.$emit('input-date', value);
+  }
+  inputMemo(value): void {
+    this.$emit('input-memo', value);
+  }
+  inputUser(value): void {
+    this.$emit('input-user', value);
+  }
+}
 </script>

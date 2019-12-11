@@ -23,7 +23,8 @@ import PageHome from '@/ts/components/pages/Home.vue';
 import PageInput from '@/ts/components/pages/Input.vue';
 import PageHistory from '@/ts/components/pages/History.vue';
 import PageAnalysis from '@/ts/components/pages/Analysis.vue';
-import { Store, StoreEvent } from '@/ts/Store/index';
+import { Store } from '@/ts/Store/index';
+import { StoreEventType } from 'type/index';
 import EventEmitter from '@/ts/plugins/EventEmitter/index';
 
 @Component({
@@ -41,11 +42,11 @@ import EventEmitter from '@/ts/plugins/EventEmitter/index';
 export default class App extends Vue {
   private page: string = Store.state.page;
 
-  created() {
+  created(): void {
     EventEmitter.on('SET_PAGE', this.changeState);
   }
 
-  changeState(e: StoreEvent) {
+  changeState(e: StoreEventType): void {
     this.page = Store.state[e.state as 'page'];
   }
 }

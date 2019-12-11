@@ -5,7 +5,7 @@ import Store from '@/ts/Store/index';
 
 const FirebaseCloudMessage = () => {
   // 通知許可のポップアップ
-  function requestPermission() {
+  function requestPermission(): void {
     (messaging as firebase.messaging.Messaging).requestPermission().then(() => {
       (messaging as firebase.messaging.Messaging).usePublicVapidKey(firebaseConfig.publicVapidKey);
       (messaging as firebase.messaging.Messaging).getToken().then(token => {
@@ -16,7 +16,7 @@ const FirebaseCloudMessage = () => {
     });
   }
 
-  function bind() {
+  function bind(): void {
     // トークンの更新処理
     (messaging as firebase.messaging.Messaging).onTokenRefresh(() => {
       (messaging as firebase.messaging.Messaging).getToken().then(token => {
@@ -44,7 +44,7 @@ const FirebaseCloudMessage = () => {
    * ログインしているユーザーのトークンを更新する
    * @param {String} newToken 新しいトークン
    */
-  async function updateToken(newToken: string) {
+  async function updateToken(newToken: string): Promise<void> {
     const willUpdate = await database
       .collection('messaging')
       .doc('token')
@@ -54,20 +54,25 @@ const FirebaseCloudMessage = () => {
         return (document.data() as firebase.firestore.DocumentData)[Store.state.loginUser] !== newToken ? true : false;
       });
 
-    if (willUpdate) {
-      database
-        .collection('messaging')
-        .doc('token')
-        .update({
-          [Store.state.loginUser]: newToken
-        })
-        .then(() => {
-          console.log('FirebaseCloudMessage - updateToken: 成功');
-        })
-        .catch(error => {
-          console.error('FirebaseCloudMessage - updateToken: 失敗', error);
-        });
-    }
+    return new Promise((resolve, reject) => {
+      if (willUpdate) {
+        database
+          .collection('messaging')
+          .doc('token')
+          .update({
+            [Store.state.loginUser]: newToken
+          })
+          .then(() => {
+            console.log('FirebaseCloudMessage - updateToken: 成功');
+            resolve();
+          })
+          .catch(error => {
+            console.error('FirebaseCloudMessage - updateToken: 失敗', error);
+            reject();
+          });
+      }
+      resolve();
+    });
   }
 
   return {
