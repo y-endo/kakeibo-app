@@ -31,105 +31,100 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
+import { Component, Prop, Vue } from 'vue-property-decorator';
+
 const classNameSelected = 'select_option-list-item--selected';
 
-export default {
-  name: 'ModuleSelect',
-  props: {
-    disable: {
-      type: Boolean,
-      default: () => false
-    },
-    required: {
-      type: Boolean,
-      default: () => true
-    },
-    multiple: {
-      type: Boolean,
-      default: () => false
-    },
-    value: {
-      type: Array,
-      default: () => []
-    },
-    options: {
-      type: Array,
-      default: () => []
-    }
-  },
-  data: function() {
-    return {
-      isFocus: false
-    };
-  },
-  computed: {
-    internalValue: {
-      get() {
-        return this.value;
-      },
-      set(newValue) {
-        if (this.value !== newValue) this.$emit('input', newValue);
-      }
-    }
-  },
-  created() {
+@Component
+export default class ModuleSelect extends Vue {
+  private isFocus = false;
+
+  @Prop({ type: Boolean, default: () => false })
+  private disable!: boolean;
+
+  @Prop({ type: Boolean, default: () => true })
+  private required!: boolean;
+
+  @Prop({ type: Boolean, default: () => false })
+  private multiple!: boolean;
+
+  @Prop({ type: Array, default: () => [] })
+  private value!: string[];
+
+  @Prop({ type: Array, default: () => [] })
+  private options!: boolean;
+
+  private get internalValue(): string[] {
+    return this.value;
+  }
+  private set internalValue(newValue: string[]) {
+    if (this.value !== newValue) this.$emit('input', newValue);
+  }
+
+  created(): void {
     document.addEventListener('click', this.documentClick);
-  },
-  methods: {
-    documentClick(e) {
-      const select = e.target.closest('.select');
-      if (select === null || select !== this.$el) {
-        this.isFocus = false;
-      }
-    },
-    handleClickSelect() {
-      if (this.disable) return;
-      this.isFocus = !this.isFocus;
+  }
 
-      // propsで値が変わったときにclassの変更が実行されないので、開くときに毎回確認する
-      this.$el.querySelectorAll('.select_option-list-item').forEach(element => {
-        element.classList.remove(classNameSelected);
-        if (this.internalValue.length > 0) {
-          this.internalValue.forEach(value => {
-            if (element.getAttribute('data-select-value') === value) {
-              element.classList.add(classNameSelected);
-            }
-          });
-        }
-      });
-    },
-    handleClickOption(e) {
-      const dataValue = e.currentTarget.getAttribute('data-select-value');
-
-      e.currentTarget.classList.toggle(classNameSelected);
-
-      if (e.currentTarget.classList.contains(classNameSelected)) {
-        if (this.multiple) {
-          this.internalValue.push(dataValue);
-        } else {
-          this.$el.querySelectorAll('.select_option-list-item').forEach(element => {
-            if (element !== e.currentTarget) element.classList.remove(classNameSelected);
-          });
-          this.internalValue = [dataValue];
-          this.close();
-        }
-      } else {
-        if (this.multiple) {
-          this.internalValue = this.internalValue.filter(value => value !== dataValue);
-        } else {
-          this.internalValue = [];
-          this.close();
-        }
-      }
-    },
-    handleClickDelete(e) {
-      const dataValue = e.currentTarget.getAttribute('data-select-value');
-      this.internalValue = this.internalValue.filter(value => value !== dataValue);
-    },
-    close() {
+  documentClick(e: UIEvent): void {
+    const select = (e.target as HTMLElement).closest('.select');
+    if (select === null || select !== this.$el) {
       this.isFocus = false;
     }
   }
-};
+
+  handleClickSelect(): void {
+    if (this.disable) return;
+    this.isFocus = !this.isFocus;
+
+    // propsで値が変わったときにclassの変更が実行されないので、開くときに毎回確認する
+    this.$el.querySelectorAll('.select_option-list-item').forEach(element => {
+      element.classList.remove(classNameSelected);
+      if (this.internalValue.length > 0) {
+        this.internalValue.forEach(value => {
+          if (element.getAttribute('data-select-value') === value) {
+            element.classList.add(classNameSelected);
+          }
+        });
+      }
+    });
+  }
+
+  handleClickOption(e: UIEvent): void {
+    const currentTarget = e.currentTarget as HTMLElement;
+    const dataValue = currentTarget.getAttribute('data-select-value');
+
+    if (dataValue === null) return;
+
+    currentTarget.classList.toggle(classNameSelected);
+
+    if (currentTarget.classList.contains(classNameSelected)) {
+      if (this.multiple) {
+        this.internalValue.push(dataValue);
+      } else {
+        this.$el.querySelectorAll('.select_option-list-item').forEach(element => {
+          if (element !== currentTarget) element.classList.remove(classNameSelected);
+        });
+        this.internalValue = [dataValue];
+        this.close();
+      }
+    } else {
+      if (this.multiple) {
+        this.internalValue = this.internalValue.filter(value => value !== dataValue);
+      } else {
+        this.internalValue = [];
+        this.close();
+      }
+    }
+  }
+
+  handleClickDelete(e: UIEvent): void {
+    const dataValue = (e.currentTarget as HTMLElement).getAttribute('data-select-value');
+    this.internalValue = this.internalValue.filter(value => value !== dataValue);
+  }
+
+  close(): void {
+    this.isFocus = false;
+  }
+}
 </script>

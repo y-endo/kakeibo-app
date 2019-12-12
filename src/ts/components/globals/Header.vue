@@ -43,33 +43,4 @@ export default class GlobalHeader extends Vue {
     this.isModalOpen = Store.state.isModalOpen;
   }
 }
-
-// export default {
-//   name: 'GlobalHeader',
-//   props: {
-//     page: {
-//       type: String,
-//       default: () => ''
-//     }
-//   },
-//   data: function() {
-//     return {
-//       isModalOpen: false
-//     };
-//   },
-//   created() {
-//     EventEmitter.on('SET_IS_MODAL_OPEN', this.changeIsModalOpen);
-//   },
-//   methods: {
-//     handleClickSearch(e) {
-//       Store.setIsModalOpen(e.currentTarget.classList.contains('button-close') ? false : true);
-//     },
-//     handleClickRefresh() {
-//       EventEmitter.emit('REFRESH_HISTORY');
-//     },
-//     changeIsModalOpen() {
-//       this.isModalOpen = Store.state.isModalOpen;
-//     }
-//   }
-// };
 </script>

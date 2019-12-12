@@ -13,8 +13,8 @@ export type OrderBy = {
 
 // DataReader.getDocuments（firestore）の引数
 export type GetDocumentsOption = {
-  where: Where[];
-  orderBy: OrderBy[];
+  where?: Where[];
+  orderBy?: OrderBy[];
 };
 
 // DataReader.getDocumentで取得したデータに対するフィルター
@@ -25,6 +25,17 @@ export type DocumentsFilter = {
   subCategory?: string[];
   payment?: string[];
   memo?: string;
+  user?: string;
+};
+
+export type Query = {
+  where: Where[];
+  orderBy: OrderBy[];
+};
+
+export type SearchQuery = {
+  query: Query;
+  filter: DocumentsFilter;
 };
 
 // Store.stateの型

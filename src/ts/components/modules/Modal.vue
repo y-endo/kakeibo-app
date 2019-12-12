@@ -32,6 +32,7 @@
 
 <script lang="ts">
 import { Component, Prop, Emit, Vue } from 'vue-property-decorator';
+import { SearchQuery } from 'type/index';
 import ModuleSearchForm from '@/ts/components/modules/SearchForm.vue';
 import ModuleInputForm from '@/ts/components/modules/InputForm.vue';
 import Store from '@/ts/Store/index';
@@ -93,28 +94,28 @@ export default class ModuleModal extends Vue {
     Store.setIsModalOpen(false);
     this.$emit('close-modal');
   }
-  setSearchQuery(value): void {
+  setSearchQuery(value: SearchQuery): void {
     this.$emit('search-query', value);
   }
-  inputMoney(value): void {
+  inputMoney(value: number): void {
     this.$emit('input-money', value);
   }
-  inputCategory(value): void {
+  inputCategory(value: string[]): void {
     this.$emit('input-category', value);
   }
-  inputSubCategory(value): void {
+  inputSubCategory(value: string[]): void {
     this.$emit('input-sub-category', value);
   }
-  inputPayment(value): void {
+  inputPayment(value: string[]): void {
     this.$emit('input-payment', value);
   }
-  inputDate(value): void {
+  inputDate(value: string): void {
     this.$emit('input-date', value);
   }
-  inputMemo(value): void {
+  inputMemo(value: string): void {
     this.$emit('input-memo', value);
   }
-  inputUser(value): void {
+  inputUser(value: string[]): void {
     this.$emit('input-user', value);
   }
 }

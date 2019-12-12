@@ -130,151 +130,191 @@
   </section>
 </template>
 
-<script>
+<script lang="ts">
+import { Component, Prop, Vue } from 'vue-property-decorator';
+import { Where } from 'type/index';
 import moment from 'moment';
-import ModuleSelect from '@/js/components/modules/Select.vue';
-import ModuleLoading from '@/js/components/modules/Loading.vue';
-import DataManager from '@/js/plugins/DataManager/index.js';
-import Store from '@/js/Store/index.js';
+import ModuleSelect from '@/ts/components/modules/Select.vue';
+import ModuleLoading from '@/ts/components/modules/Loading.vue';
+import DataManager from '@/ts/plugins/DataManager/index';
+import Store from '@/ts/Store/index';
 
-export default {
-  name: 'PageAnalysis',
+// 2019年から今のYYYY
+const now = moment();
+const yearOptions: number[] = [];
+for (let year = 2019; year <= parseInt(now.format('YYYY'), 10); year++) {
+  yearOptions.push(year);
+}
+
+type Summary = {
+  virtual: number;
+  credit: number;
+  cash: number;
+  all: number;
+  practical?: number;
+};
+
+type Detail = {
+  key: string;
+  all: number;
+  practical?: number;
+};
+
+type AnalysisData =
+  | {
+      支出: {
+        [key: string]: Summary;
+        概要: Summary;
+      };
+      収入: {
+        [key: string]: Summary;
+        概要: Summary;
+      };
+      貯蓄: {
+        [key: string]: Summary;
+        概要: Summary;
+      };
+      expenditures: Detail[];
+      incomes: Detail[];
+      storages: Detail[];
+      incomeAndOutgo: number;
+    }
+  | undefined;
+
+@Component({
   components: {
     ModuleSelect,
     ModuleLoading
-  },
-  props: {
-    page: {
-      type: String,
-      default: () => ''
-    }
-  },
-  data: function() {
-    const now = moment();
-    const yearOptions = [];
-
-    // 2019年から今のYYYY
-    for (let year = 2019; year <= now.format('YYYY'); year++) {
-      yearOptions.push(year);
-    }
-
-    return {
-      year: [now.format('YYYY')],
-      month: [now.format('MM')],
-      user: [Store.state.loginUserName],
-      yearOptions,
-      monthOptions: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
-      userOptions: ['全員', '勇気', '友恵', '生真'],
-      data: {},
-      isLoading: false
-    };
-  },
-  methods: {
-    handleSubmit(e) {
-      e.preventDefault();
-      this.render();
-    },
-    render() {
-      this.isLoading = true;
-
-      const target = moment(`${this.year[0]}-${this.month[0].padStart(2, '0')}-01`);
-      const start = target.startOf('month').format('YYYY-MM-DD');
-      const end = target.endOf('month').format('YYYY-MM-DD');
-      const query = [{ key: 'date', operator: '>=', value: start }, { key: 'date', operator: '<=', value: end }];
-      if (this.user[0] !== '全員') {
-        query.push({ key: 'user', operator: '==', value: this.user[0] });
-      }
-
-      const data = {
-        支出: {
-          概要: {}
-        },
-        収入: {
-          概要: {}
-        },
-        貯蓄: {
-          概要: {}
-        }
-      };
-      DataManager.reader
-        .getDocuments({
-          where: query
-        })
-        .then(documents => {
-          documents.forEach(doc => {
-            data[doc.category][doc.subCategory] = data[doc.category][doc.subCategory] || {};
-            data[doc.category][doc.subCategory]['virtual'] = data[doc.category][doc.subCategory]['virtual'] || 0;
-            data[doc.category][doc.subCategory]['credit'] = data[doc.category][doc.subCategory]['credit'] || 0;
-            data[doc.category][doc.subCategory]['cash'] = data[doc.category][doc.subCategory]['cash'] || 0;
-            data[doc.category][doc.subCategory]['all'] = data[doc.category][doc.subCategory]['all'] || 0;
-            data[doc.category]['概要']['virtual'] = data[doc.category]['概要']['virtual'] || 0;
-            data[doc.category]['概要']['credit'] = data[doc.category]['概要']['credit'] || 0;
-            data[doc.category]['概要']['cash'] = data[doc.category]['概要']['cash'] || 0;
-            data[doc.category]['概要']['all'] = data[doc.category]['概要']['all'] || 0;
-
-            if (doc.category === '支出') {
-              // 実際に消費した金額 ICカード等で払ったものは含めない
-              data['支出'][doc.subCategory]['practical'] = data['支出'][doc.subCategory]['practical'] || 0;
-              data['支出']['概要']['practical'] = data['支出']['概要']['practical'] || 0;
-
-              if (!['ポイント', 'ICカード', 'ギフト'].includes(doc.payment)) {
-                data['支出'][doc.subCategory]['practical'] += doc.money;
-                data['支出']['概要']['practical'] += doc.money;
-              }
-            }
-
-            if (['ポイント', 'ICカード', 'ギフト'].includes(doc.payment)) {
-              data[doc.category][doc.subCategory]['virtual'] += doc.money;
-              data[doc.category]['概要']['virtual'] += doc.money;
-            } else if (doc.payment === 'クレジットカード') {
-              data[doc.category][doc.subCategory]['credit'] += doc.money;
-              data[doc.category]['概要']['credit'] += doc.money;
-            } else {
-              data[doc.category][doc.subCategory]['cash'] += doc.money;
-              data[doc.category]['概要']['cash'] += doc.money;
-            }
-
-            data[doc.category][doc.subCategory]['all'] += doc.money;
-            data[doc.category]['概要']['all'] += doc.money;
-          });
-
-          data.expenditures = [];
-          data.incomes = [];
-          data.storages = [];
-
-          for (let key in data['支出']) {
-            if (key === '概要') continue;
-            data.expenditures.push({ key, practical: data['支出'][key]['practical'], all: data['支出'][key]['all'] });
-          }
-          for (let key in data['収入']) {
-            if (key === '概要') continue;
-            data.incomes.push({ key, all: data['収入'][key]['all'] });
-          }
-          for (let key in data['貯蓄']) {
-            if (key === '概要') continue;
-            data.storages.push({ key, all: data['貯蓄'][key]['all'] });
-          }
-
-          data['収入']['概要']['all'] = data['収入']['概要']['all'] || 0;
-          data['支出']['概要']['practical'] = data['支出']['概要']['practical'] || 0;
-          data['貯蓄']['概要']['all'] = data['貯蓄']['概要']['all'] || 0;
-
-          // 収支の計算
-          data.incomeAndOutgo = data['収入']['概要']['all'] - data['支出']['概要']['practical'];
-
-          console.log(data);
-          this.data = data;
-
-          this.isLoading = false;
-        })
-        .catch(error => {
-          Store.setMessageText('エラー: 分析に失敗しました。');
-          Store.setMessageType('error');
-          Store.setIsMessageShow(true);
-          this.isLoading = false;
-          console.error(error);
-        });
-    }
   }
-};
+})
+export default class PageAnalysis extends Vue {
+  /** props */
+  @Prop({ type: String, default: '' })
+  private page!: string;
+
+  /** data */
+  private year: string[] = [now.format('YYYY')];
+  private month: string[] = [now.format('MM')];
+  private user: string[] = [Store.state.loginUserName];
+  private yearOptions: number[] = yearOptions;
+  private monthOptions: number[] = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
+  private userOptions: string[] = ['全員', '勇気', '友恵', '生真'];
+  private data: AnalysisData;
+  private isLoading = false;
+
+  handleSubmit(e: UIEvent): void {
+    e.preventDefault();
+    this.render();
+  }
+
+  render(): void {
+    this.isLoading = true;
+
+    const target = moment(`${this.year[0]}-${this.month[0].padStart(2, '0')}-01`);
+    const start = target.startOf('month').format('YYYY-MM-DD');
+    const end = target.endOf('month').format('YYYY-MM-DD');
+    const query: Where[] = [
+      { key: 'date', operator: '>=', value: start },
+      { key: 'date', operator: '<=', value: end }
+    ];
+    if (this.user[0] !== '全員') {
+      query.push({ key: 'user', operator: '==', value: this.user[0] });
+    }
+
+    const summary: Summary = {
+      virtual: 0,
+      credit: 0,
+      cash: 0,
+      all: 0
+    };
+    const data: AnalysisData = {
+      支出: {
+        概要: { ...summary }
+      },
+      収入: {
+        概要: { ...summary }
+      },
+      貯蓄: {
+        概要: { ...summary }
+      },
+      expenditures: [],
+      incomes: [],
+      storages: [],
+      incomeAndOutgo: 0
+    };
+    DataManager.reader
+      .getDocuments({
+        where: query
+      })
+      .then(documents => {
+        documents.forEach(doc => {
+          const category: '支出' | '収入' | '貯蓄' = doc.category;
+          const subCategory: string = doc.subCategory;
+
+          data[category][subCategory] = data[category][subCategory] || {};
+          data[category][subCategory]['virtual'] = data[category][subCategory]['virtual'] || 0;
+          data[category][subCategory]['credit'] = data[category][subCategory]['credit'] || 0;
+          data[category][subCategory]['cash'] = data[category][subCategory]['cash'] || 0;
+          data[category][subCategory]['all'] = data[category][subCategory]['all'] || 0;
+
+          if (category === '支出') {
+            // 実際に消費した金額 ICカード等で払ったものは含めない
+            data['支出'][subCategory]['practical'] = data['支出'][subCategory]['practical'] || 0;
+            data['支出']['概要']['practical'] = data['支出']['概要']['practical'] || 0;
+
+            if (!['ポイント', 'ICカード', 'ギフト'].includes(doc.payment)) {
+              data['支出'][subCategory]['practical'] += doc.money;
+              data['支出']['概要']['practical'] += doc.money;
+            }
+          }
+
+          if (['ポイント', 'ICカード', 'ギフト'].includes(doc.payment)) {
+            data[category][subCategory]['virtual'] += doc.money;
+            data[category]['概要']['virtual'] += doc.money;
+          } else if (doc.payment === 'クレジットカード') {
+            data[category][subCategory]['credit'] += doc.money;
+            data[category]['概要']['credit'] += doc.money;
+          } else {
+            data[category][subCategory]['cash'] += doc.money;
+            data[category]['概要']['cash'] += doc.money;
+          }
+
+          data[category][subCategory]['all'] += doc.money;
+          data[category]['概要']['all'] += doc.money;
+        });
+
+        for (const key in data['支出']) {
+          if (key === '概要') continue;
+          data.expenditures.push({ key, practical: data['支出'][key]['practical'], all: data['支出'][key]['all'] });
+        }
+        for (const key in data['収入']) {
+          if (key === '概要') continue;
+          data.incomes.push({ key, all: data['収入'][key]['all'] });
+        }
+        for (const key in data['貯蓄']) {
+          if (key === '概要') continue;
+          data.storages.push({ key, all: data['貯蓄'][key]['all'] });
+        }
+
+        data['収入']['概要']['all'] = data['収入']['概要']['all'] || 0;
+        data['支出']['概要']['practical'] = data['支出']['概要']['practical'] || 0;
+        data['貯蓄']['概要']['all'] = data['貯蓄']['概要']['all'] || 0;
+
+        // 収支の計算
+        data.incomeAndOutgo = data['収入']['概要']['all'] - data['支出']['概要']['practical'];
+
+        console.log(data);
+        this.data = data;
+
+        this.isLoading = false;
+      })
+      .catch(error => {
+        Store.setMessageText('エラー: 分析に失敗しました。');
+        Store.setMessageType('error');
+        Store.setIsMessageShow(true);
+        this.isLoading = false;
+        console.error(error);
+      });
+  }
+}
 </script>

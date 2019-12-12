@@ -68,6 +68,11 @@ export default class ModuleHistoryList extends Vue {
   @Prop({ type: Array, default: [] })
   private itemData!: HistoryItem[];
 
+  @Emit('list-click')
+  listClick(e: UIEvent, data: HistoryItem): { e: UIEvent; data: HistoryItem } {
+    return { e, data };
+  }
+
   private get dateString(): { year: string; month: string; day: string } {
     const dateArray = this.date.split('-');
 
@@ -96,9 +101,8 @@ export default class ModuleHistoryList extends Vue {
     return result;
   }
 
-  @Emit()
-  listClick(event: UIEvent, data: HistoryItem): { event: UIEvent; data: HistoryItem } {
-    return { event, data };
+  handleClick(e: UIEvent, data: HistoryItem): void {
+    this.listClick(e, data);
   }
 }
 </script>

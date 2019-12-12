@@ -134,21 +134,11 @@
 
 <script lang="ts">
 import { Component, Emit, Watch, Vue } from 'vue-property-decorator';
-import { Where, OrderBy, DocumentsFilter } from 'type/index';
+import { Where, OrderBy, DocumentsFilter, Query, SearchQuery } from 'type/index';
 import moment from 'moment';
 import categoryProps from '@/ts/config/categoryProps.json';
 import ModuleSelect from '@/ts/components/modules/Select.vue';
 import Store from '@/ts/Store/index';
-
-type Query = {
-  where: Where[];
-  orderBy: OrderBy[];
-};
-
-type SearchQuery = {
-  query: Query;
-  filter: DocumentsFilter;
-};
 
 @Component({
   components: {
