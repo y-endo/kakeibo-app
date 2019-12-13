@@ -47,18 +47,7 @@
 
 <script lang="ts">
 import { Component, Prop, Emit, Vue } from 'vue-property-decorator';
-
-type HistoryItem = {
-  category: string;
-  subCategory: string;
-  date: string;
-  memo: string;
-  money: number;
-  payment: string;
-  pubDate: number;
-  sign: string;
-  user: string;
-};
+import { HistoryItem } from 'type/index';
 
 @Component
 export default class ModuleHistoryList extends Vue {
@@ -69,8 +58,8 @@ export default class ModuleHistoryList extends Vue {
   private itemData!: HistoryItem[];
 
   @Emit('list-click')
-  listClick(e: UIEvent, data: HistoryItem): { e: UIEvent; data: HistoryItem } {
-    return { e, data };
+  private emitListClick(data: HistoryItem): HistoryItem {
+    return data;
   }
 
   private get dateString(): { year: string; month: string; day: string } {
@@ -102,7 +91,7 @@ export default class ModuleHistoryList extends Vue {
   }
 
   handleClick(e: UIEvent, data: HistoryItem): void {
-    this.listClick(e, data);
+    this.emitListClick(data);
   }
 }
 </script>

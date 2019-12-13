@@ -32,8 +32,6 @@ auth.onAuthStateChanged(user => {
   if (user === null) {
     Login.create();
     return;
-  } else {
-    user.email = user.email === null ? '' : user.email;
   }
 
   // プッシュ通知ポップアップ
@@ -47,15 +45,17 @@ auth.onAuthStateChanged(user => {
 
   document.body.insertAdjacentHTML('beforeend', '<div id="app"></div>');
 
+  const email = user.email === null ? '' : user.email;
+
   // state初期化
   Store.initialize();
-  Store.setLoginUser(user.email.split('@')[0]);
+  Store.setLoginUser(email.split('@')[0]);
   const userName: UserName = {
     yuki: '勇気',
     tomoe: '友恵',
     ikuma: '生真'
   };
-  Store.setLoginUserName(userName[user.email.split('@')[0]]);
+  Store.setLoginUserName(userName[email.split('@')[0]]);
 
   // データベースの変更を監視
   DataManager.updater.watch();

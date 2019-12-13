@@ -167,7 +167,37 @@ export default class ModuleInputForm extends Vue {
   private hasDelete!: boolean;
 
   @Emit('input-money')
-  private inputMoney(value: number): number {
+  private emitInputMoney(value: number): number {
+    return value;
+  }
+
+  @Emit('input-category')
+  private emitInputCategory(value: string[]): string[] {
+    return value;
+  }
+
+  @Emit('input-sub-category')
+  private emitInputSubCategory(value: string[]): string[] {
+    return value;
+  }
+
+  @Emit('input-payment')
+  private emitInputPayment(value: string[]): string[] {
+    return value;
+  }
+
+  @Emit('input-date')
+  private emitInputDate(value: string): string {
+    return value;
+  }
+
+  @Emit('input-memo')
+  private emitInputMemo(value: string): string {
+    return value;
+  }
+
+  @Emit('input-user')
+  private emitInputUser(value: string[]): string[] {
     return value;
   }
 
@@ -175,49 +205,49 @@ export default class ModuleInputForm extends Vue {
     return this.money;
   }
   private set internalMoney(newValue: string | number) {
-    if (String(this.money) !== newValue) this.inputMoney(parseInt(newValue as string, 10));
+    if (String(this.money) !== newValue) this.emitInputMoney(parseInt(newValue as string, 10));
   }
 
   private get internalCategory(): string[] {
     return this.category;
   }
   private set internalCategory(newValue: string[]) {
-    if (this.category !== newValue) this.$emit('input-category', newValue);
+    if (this.category !== newValue) this.emitInputCategory(newValue);
   }
 
   private get internalSubCategory(): string[] {
     return this.subCategory;
   }
   private set internalSubCategory(newValue: string[]) {
-    if (this.subCategory !== newValue) this.$emit('input-sub-category', newValue);
+    if (this.subCategory !== newValue) this.emitInputSubCategory(newValue);
   }
 
   private get internalPayment(): string[] {
     return this.payment;
   }
   private set internalPayment(newValue: string[]) {
-    if (this.payment !== newValue) this.$emit('input-payment', newValue);
+    if (this.payment !== newValue) this.emitInputPayment(newValue);
   }
 
   private get internalDate(): string {
     return this.date;
   }
   private set internalDate(newValue: string) {
-    if (this.date !== newValue) this.$emit('input-date', newValue);
+    if (this.date !== newValue) this.emitInputDate(newValue);
   }
 
   private get internalMemo(): string {
     return this.memo;
   }
   private set internalMemo(newValue: string) {
-    if (this.memo !== newValue) this.$emit('input-memo', newValue);
+    if (this.memo !== newValue) this.emitInputMemo(newValue);
   }
 
   private get internalUser(): string[] {
     return this.user;
   }
   private set internalUser(newValue: string[]) {
-    if (this.user !== newValue) this.$emit('input-user', newValue);
+    if (this.user !== newValue) this.emitInputUser(newValue);
   }
 
   private get subCategoryOptions(): string[] {

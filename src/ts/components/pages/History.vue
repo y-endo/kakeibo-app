@@ -25,7 +25,7 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator';
-import { Where, OrderBy, DocumentsFilter } from 'type/index';
+import { Where, OrderBy, DocumentsFilter, HistoryItem, StoreEventType, SearchQuery } from 'type/index';
 import moment from 'moment';
 import DataManager from '@/ts/plugins/DataManager/index';
 import EventEmitter from '@/ts/plugins/EventEmitter/index';
@@ -144,74 +144,74 @@ export default class PageHistory extends Vue {
       });
   }
 
-  openEditModal(e: UIEvent, data: HistoryItem) {
+  openEditModal(data: HistoryItem): void {
     Store.setIsModalOpen(true);
     this.modalType = 'edit';
     this.isModalOpen = true;
     this.modalPositionTop = this.$el.scrollTop;
     this.editData = {
-      id: e.data.id,
-      money: e.data.money,
-      category: [e.data.category],
-      subCategory: [e.data.subCategory],
-      payment: [e.data.payment],
-      date: e.data.date,
-      memo: e.data.memo,
-      user: [e.data.user]
+      id: data.id,
+      money: data.money,
+      category: [data.category],
+      subCategory: [data.subCategory],
+      payment: [data.payment],
+      date: data.date,
+      memo: data.memo,
+      user: [data.user]
     };
     setTimeout(() => {
       this.isInputFormWatchEnable = true;
     }, 200);
   }
 
-  changeIsModalOpen(e) {
-    this.isModalOpen = Store.state[e.state];
+  changeIsModalOpen(e: StoreEventType): void {
+    this.isModalOpen = Store.state[e.state as 'isModalOpen'];
 
     if (this.isModalOpen) {
       this.modalType = 'search';
-      this.$el.style.overflow = 'hidden';
+      (this.$el as HTMLElement).style.overflow = 'hidden';
       this.modalPositionTop = this.$el.scrollTop;
     } else {
-      this.$el.style.overflow = '';
+      (this.$el as HTMLElement).style.overflow = '';
       this.isInputFormWatchEnable = false;
     }
   }
 
-  setSearchQuery(value) {
+  setSearchQuery(value: SearchQuery): void {
     this.searchQuery = value.query;
     this.filter = value.filter;
     this.getDocuments();
   }
 
-  closeModal() {
+  closeModal(): void {
     this.isInputFormWatchEnable = false;
   }
 
-  setMoney(value) {
+  setMoney(value: number): void {
     this.editData.money = value;
   }
 
-  setCategory(value) {
+  setCategory(value: string[]): void {
     this.editData.category = value;
   }
 
-  setSubCategory(value) {
+  setSubCategory(value: string[]): void {
     this.editData.subCategory = value;
   }
 
-  setPayment(value) {
+  setPayment(value: string[]): void {
     this.editData.payment = value;
   }
 
-  setDate(value) {
+  setDate(value: string): void {
     this.editData.date = value;
   }
 
-  setMemo(value) {
+  setMemo(value: string): void {
     this.editData.memo = value;
   }
 
-  setUser(value) {
+  setUser(value: string[]): void {
     this.editData.user = value;
   }
 }

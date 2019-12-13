@@ -1,6 +1,6 @@
 import moment from 'moment';
-import { database } from '@/ts/plugins/firebase/index.js';
-import EventEmitter from '@/ts/plugins/EventEmitter/index.js';
+import { database } from '@/ts/plugins/firebase/index';
+import EventEmitter from '@/ts/plugins/EventEmitter/index';
 
 type UpdateHomeDataOption = {
   money: number;

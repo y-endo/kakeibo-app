@@ -160,26 +160,24 @@ type Detail = {
   practical?: number;
 };
 
-type AnalysisData =
-  | {
-      支出: {
-        [key: string]: Summary;
-        概要: Summary;
-      };
-      収入: {
-        [key: string]: Summary;
-        概要: Summary;
-      };
-      貯蓄: {
-        [key: string]: Summary;
-        概要: Summary;
-      };
-      expenditures: Detail[];
-      incomes: Detail[];
-      storages: Detail[];
-      incomeAndOutgo: number;
-    }
-  | undefined;
+type AnalysisData = {
+  支出: {
+    [key: string]: Summary;
+    概要: Summary;
+  };
+  収入: {
+    [key: string]: Summary;
+    概要: Summary;
+  };
+  貯蓄: {
+    [key: string]: Summary;
+    概要: Summary;
+  };
+  expenditures: Detail[];
+  incomes: Detail[];
+  storages: Detail[];
+  incomeAndOutgo: number;
+};
 
 @Component({
   components: {
@@ -199,15 +197,15 @@ export default class PageAnalysis extends Vue {
   private yearOptions: number[] = yearOptions;
   private monthOptions: number[] = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
   private userOptions: string[] = ['全員', '勇気', '友恵', '生真'];
-  private data: AnalysisData;
+  private data: AnalysisData | {} = {};
   private isLoading = false;
 
-  handleSubmit(e: UIEvent): void {
+  private handleSubmit(e: UIEvent): void {
     e.preventDefault();
-    this.render();
+    this.renderAnalysis();
   }
 
-  render(): void {
+  private renderAnalysis(): void {
     this.isLoading = true;
 
     const target = moment(`${this.year[0]}-${this.month[0].padStart(2, '0')}-01`);

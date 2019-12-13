@@ -1,6 +1,6 @@
-import DataReader from './DataReader/index.js';
-import DataRegister from './DataRegister/index.js';
-import DataUpdater from './DataUpdater/index.js';
+import DataReader from './DataReader/index';
+import DataRegister from './DataRegister/index';
+import DataUpdater from './DataUpdater/index';
 
 class DataManager {
   public reader: DataReader;

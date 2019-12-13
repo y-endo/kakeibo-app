@@ -60,3 +60,16 @@ export interface StoreInterface {
     [P in keyof StoreStateType]: StoreStateType[P];
   };
 }
+
+export type HistoryItem = {
+  id?: string;
+  category: string;
+  subCategory: string;
+  date: string;
+  memo: string;
+  money: number;
+  payment: string;
+  pubDate: number;
+  sign: string;
+  user: string;
+};

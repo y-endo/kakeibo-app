@@ -3,7 +3,7 @@ import { database } from '@/ts/plugins/firebase/index';
 import { messaging } from '@/ts/plugins/firebase/index';
 import Store from '@/ts/Store/index';
 
-const FirebaseCloudMessage = () => {
+const FirebaseCloudMessage = (): { [key: string]: Function } => {
   // 通知許可のポップアップ
   function requestPermission(): void {
     (messaging as firebase.messaging.Messaging).requestPermission().then(() => {

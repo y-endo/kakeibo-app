@@ -1,4 +1,4 @@
-import { database } from '@/ts/plugins/firebase/index.js';
+import { database } from '@/ts/plugins/firebase/index';
 
 class DataRegister {
   private isRegistering: boolean;

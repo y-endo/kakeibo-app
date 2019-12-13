@@ -32,7 +32,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator';
+import { Component, Prop, Emit, Vue } from 'vue-property-decorator';
 
 const classNameSelected = 'select_option-list-item--selected';
 
@@ -55,11 +55,16 @@ export default class ModuleSelect extends Vue {
   @Prop({ type: Array, default: () => [] })
   private options!: boolean;
 
+  @Emit('input')
+  private emitInput(value: string[]): string[] {
+    return value;
+  }
+
   private get internalValue(): string[] {
     return this.value;
   }
   private set internalValue(newValue: string[]) {
-    if (this.value !== newValue) this.$emit('input', newValue);
+    if (this.value !== newValue) this.emitInput(newValue);
   }
 
   created(): void {

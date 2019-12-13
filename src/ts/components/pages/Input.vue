@@ -19,55 +19,55 @@
   </section>
 </template>
 
-<script>
+<script lang="ts">
+import { Component, Prop, Vue } from 'vue-property-decorator';
 import moment from 'moment';
-import ModuleInputForm from '@/js/components/modules/InputForm.vue';
-import Store from '@/js/Store/index.js';
+import ModuleInputForm from '@/ts/components/modules/InputForm.vue';
+import Store from '@/ts/Store/index';
 
-export default {
-  name: 'PageInput',
+@Component({
   components: {
     ModuleInputForm
-  },
-  props: {
-    page: {
-      type: String,
-      default: () => ''
-    }
-  },
-  data: function() {
-    return {
-      money: null,
-      category: [],
-      subCategory: [],
-      payment: [],
-      date: moment().format('YYYY-MM-DD'),
-      memo: '',
-      user: [Store.state.loginUserName]
-    };
-  },
-  methods: {
-    setMoney(value) {
-      this.money = value;
-    },
-    setCategory(value) {
-      this.category = value;
-    },
-    setSubCategory(value) {
-      this.subCategory = value;
-    },
-    setPayment(value) {
-      this.payment = value;
-    },
-    setDate(value) {
-      this.date = value;
-    },
-    setMemo(value) {
-      this.memo = value;
-    },
-    setUser(value) {
-      this.user = value;
-    }
   }
-};
+})
+export default class PageInput extends Vue {
+  @Prop({ type: String, default: '' })
+  private page!: string;
+
+  private money: number | null = null;
+  private category: string[] = [];
+  private subCategory: string[] = [];
+  private payment: string[] = [];
+  private date: string = moment().format('YYYY-MM-DD');
+  private memo = '';
+  private user: string[] = [Store.state.loginUserName];
+
+  setMoney(value: number): void {
+    this.money = value;
+  }
+
+  setCategory(value: string[]): void {
+    this.category = value;
+  }
+
+  setSubCategory(value: string[]): void {
+    this.subCategory = value;
+  }
+
+  setPayment(value: string[]): void {
+    this.payment = value;
+  }
+
+  setDate(value: string): void {
+    this.date = value;
+  }
+
+  setMemo(value: string): void {
+    this.memo = value;
+  }
+
+  setUser(value: string[]): void {
+    this.user = value;
+  }
+}
 </script>

@@ -83,40 +83,77 @@ export default class ModuleModal extends Vue {
   private editData!: EditDataType;
 
   @Emit('close-modal')
-  private closeModal(): void {
+  private emitCloseModal(): void {
     return;
   }
 
-  // @Emit('search-query')
-  // private searchQuery():
+  @Emit('search-query')
+  private emitSearchQuery(value: SearchQuery): SearchQuery {
+    return value;
+  }
+
+  @Emit('input-money')
+  private emitInputMoney(value: number): number {
+    return value;
+  }
+
+  @Emit('input-category')
+  private emitInputCategory(value: string[]): string[] {
+    return value;
+  }
+
+  @Emit('input-sub-category')
+  private emitInputSubCategory(value: string[]): string[] {
+    return value;
+  }
+
+  @Emit('input-payment')
+  private emitInputPayment(value: string[]): string[] {
+    return value;
+  }
+
+  @Emit('input-date')
+  private emitInputDate(value: string): string {
+    return value;
+  }
+
+  @Emit('input-memo')
+  private emitInputMemo(value: string): string {
+    return value;
+  }
+
+  @Emit('input-user')
+  private emitInputUser(value: string[]): string[] {
+    return value;
+  }
 
   handleClick(): void {
     Store.setIsModalOpen(false);
-    this.$emit('close-modal');
+    this.emitCloseModal();
   }
   setSearchQuery(value: SearchQuery): void {
-    this.$emit('search-query', value);
+    this.emitSearchQuery(value);
   }
   inputMoney(value: number): void {
-    this.$emit('input-money', value);
+    this.emitInputMoney(value);
   }
   inputCategory(value: string[]): void {
-    this.$emit('input-category', value);
+    this.emitInputCategory(value);
   }
   inputSubCategory(value: string[]): void {
-    this.$emit('input-sub-category', value);
+    this.emitInputSubCategory(value);
   }
   inputPayment(value: string[]): void {
-    this.$emit('input-payment', value);
+    this.emitInputPayment(value);
   }
   inputDate(value: string): void {
-    this.$emit('input-date', value);
+    this.emitInputDate(value);
   }
   inputMemo(value: string): void {
-    this.$emit('input-memo', value);
+    this.emitInputMemo(value);
   }
   inputUser(value: string[]): void {
-    this.$emit('input-user', value);
+    this.emitInputUser(value);
   }
 }
 </script>

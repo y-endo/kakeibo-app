@@ -1,5 +1,5 @@
 import { GetDocumentsOption } from 'type/index';
-import { database } from '@/ts/plugins/firebase/index.js';
+import { database } from '@/ts/plugins/firebase/index';
 
 class DataReader {
   public getDocument(id: string): Promise<firebase.firestore.DocumentData> {
@@ -22,22 +22,20 @@ class DataReader {
     console.log('DataManager: DataReader.getDocuments', option);
     return new Promise(resolve => {
       const documents: firebase.firestore.DocumentData[] = [];
-      const collection: firebase.firestore.CollectionReference = database.collection('data');
-      let query: firebase.firestore.Query | null = null;
+      let collection: firebase.firestore.CollectionReference | firebase.firestore.Query = database.collection('data');
 
       if (option.where) {
         option.where.forEach(where => {
-          query = collection.where(where.key, where.operator, where.value);
+          collection = collection.where(where.key, where.operator, where.value);
         });
       }
       if (option.orderBy) {
         option.orderBy.forEach(orderBy => {
-          query = collection.orderBy(orderBy.key, orderBy.sort);
+          collection = collection.orderBy(orderBy.key, orderBy.sort);
         });
       }
 
-      const target = query === null ? collection : query;
-      target.get().then(querySnapshot => {
+      collection.get().then(querySnapshot => {
         querySnapshot.forEach(document => {
           const data = document.data();
           data.id = document.id;

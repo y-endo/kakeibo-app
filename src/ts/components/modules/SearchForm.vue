@@ -172,12 +172,12 @@ export default class ModuleSearchForm extends Vue {
   }
 
   @Watch('category')
-  handleWatchCategory(): void {
+  private handleWatchCategory(): void {
     this.subCategory = [];
   }
 
   @Emit('search-query')
-  private searchQuery(value: SearchQuery): SearchQuery {
+  private emitSearchQuery(value: SearchQuery): SearchQuery {
     return value;
   }
 
@@ -244,7 +244,7 @@ export default class ModuleSearchForm extends Vue {
       orderBy
     };
 
-    this.searchQuery({ query, filter });
+    this.emitSearchQuery({ query, filter });
 
     Store.setIsModalOpen(false);
   }

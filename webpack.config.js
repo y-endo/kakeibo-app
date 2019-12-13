@@ -34,6 +34,7 @@ module.exports = {
       },
       {
         test: /\.ts$/,
+        exclude: /node_modules/,
         use: [
           'babel-loader',
           {
@@ -42,8 +43,7 @@ module.exports = {
               appendTsSuffixTo: [/\.vue$/]
             }
           }
-        ],
-        exclude: /node_modules/
+        ]
       },
       {
         test: /\.scss/,
@@ -84,7 +84,7 @@ module.exports = {
       '@': path.resolve(__dirname, './src'),
       type: path.resolve(__dirname, './src/ts/types')
     },
-    extensions: ['', '.js', '.ts', '.vue']
+    extensions: ['.js', '.ts', '.vue']
   },
   optimization:
     mode === 'production'

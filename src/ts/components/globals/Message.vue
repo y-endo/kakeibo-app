@@ -16,7 +16,7 @@ export default class GlobalMessage extends Vue {
   private isShow = false;
   private isError = false;
   private text = '';
-  private timerId?: NodeJS.Timeout;
+  private timerId = -1;
 
   created(): void {
     EventEmitter.on('SET_MESSAGE_TEXT', this.changeText);
@@ -49,7 +49,8 @@ export default class GlobalMessage extends Vue {
 
     // 5秒経って消えてなかったら消す
     if (this.timerId !== void 0) clearTimeout(this.timerId);
-    this.timerId = setTimeout(() => {
+
+    this.timerId = window.setTimeout(() => {
       if (this.isShow) this.hide();
     }, 5000);
   }
