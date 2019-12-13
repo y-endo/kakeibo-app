@@ -53,9 +53,9 @@ type EditData = {
   }
 })
 export default class PageHistory extends Vue {
-  @Prop({ type: String, default: '' })
-  private page!: string;
-
+  /**
+   * data
+   */
   private isActivateFirst = true;
   private historyData: { [key: string]: firebase.firestore.DocumentData[] } = {};
   private isModalOpen = false;
@@ -85,6 +85,15 @@ export default class PageHistory extends Vue {
     user: Store.state.loginUserName
   };
 
+  /**
+   * props
+   */
+  @Prop({ type: String, default: '' })
+  private page!: string;
+
+  /**
+   * lifecycle hook
+   */
   created(): void {
     EventEmitter.on('SET_PAGE', () => {
       if (!(this.isActivateFirst && Store.state.page === 'history')) return;
@@ -95,6 +104,9 @@ export default class PageHistory extends Vue {
     EventEmitter.on('SET_IS_MODAL_OPEN', this.changeIsModalOpen);
   }
 
+  /**
+   * methods
+   */
   getDocuments(): void {
     this.historyData = {};
     this.isLoading = true;

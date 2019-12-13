@@ -51,17 +51,26 @@ import { HistoryItem } from 'type/index';
 
 @Component
 export default class ModuleHistoryList extends Vue {
+  /**
+   * props
+   */
   @Prop({ type: String, default: '' })
   private date!: string;
 
   @Prop({ type: Array, default: [] })
   private itemData!: HistoryItem[];
 
+  /**
+   * emit
+   */
   @Emit('list-click')
   private emitListClick(data: HistoryItem): HistoryItem {
     return data;
   }
 
+  /**
+   * computed
+   */
   private get dateString(): { year: string; month: string; day: string } {
     const dateArray = this.date.split('-');
 
@@ -90,6 +99,9 @@ export default class ModuleHistoryList extends Vue {
     return result;
   }
 
+  /**
+   * methods
+   */
   handleClick(e: UIEvent, data: HistoryItem): void {
     this.emitListClick(data);
   }

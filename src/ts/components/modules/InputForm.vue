@@ -128,11 +128,17 @@ type CategoryProps = {
   }
 })
 export default class ModuleInputForm extends Vue {
+  /**
+   * data
+   */
   private categoryOptions = (categoryProps as CategoryProps).main;
   private paymentOptions = ['現金', 'クレジットカード', '振込', 'ポイント', 'ICカード', 'ギフト'];
   private userOptions = ['勇気', '友恵', '生真'];
   private isLoading = false;
 
+  /**
+   * props
+   */
   @Prop({ type: String, default: '' })
   private id!: string;
 
@@ -166,6 +172,9 @@ export default class ModuleInputForm extends Vue {
   @Prop({ type: Boolean, default: false })
   private hasDelete!: boolean;
 
+  /**
+   * emit
+   */
   @Emit('input-money')
   private emitInputMoney(value: number): number {
     return value;
@@ -201,6 +210,9 @@ export default class ModuleInputForm extends Vue {
     return value;
   }
 
+  /**
+   * computed
+   */
   private get internalMoney(): string | number {
     return this.money;
   }
@@ -254,12 +266,18 @@ export default class ModuleInputForm extends Vue {
     return this.category.length === 0 ? [] : (categoryProps as CategoryProps).sub[this.category[0]];
   }
 
+  /**
+   * watch
+   */
   @Watch('internalCategory')
   handleWatchInternalCategory(): void {
     if (!this.isWatchEnable) return;
     this.internalSubCategory = [];
   }
 
+  /**
+   * methods
+   */
   handleSubmit(e: Event): void {
     e.preventDefault();
 

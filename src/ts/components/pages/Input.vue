@@ -31,9 +31,9 @@ import Store from '@/ts/Store/index';
   }
 })
 export default class PageInput extends Vue {
-  @Prop({ type: String, default: '' })
-  private page!: string;
-
+  /**
+   * data
+   */
   private money: number | null = null;
   private category: string[] = [];
   private subCategory: string[] = [];
@@ -42,6 +42,15 @@ export default class PageInput extends Vue {
   private memo = '';
   private user: string[] = [Store.state.loginUserName];
 
+  /**
+   * props
+   */
+  @Prop({ type: String, default: '' })
+  private page!: string;
+
+  /**
+   * methods
+   */
   setMoney(value: number): void {
     this.money = value;
   }

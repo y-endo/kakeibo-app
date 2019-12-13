@@ -186,11 +186,9 @@ type AnalysisData = {
   }
 })
 export default class PageAnalysis extends Vue {
-  /** props */
-  @Prop({ type: String, default: '' })
-  private page!: string;
-
-  /** data */
+  /**
+   * data
+   */
   private year: string[] = [now.format('YYYY')];
   private month: string[] = [now.format('MM')];
   private user: string[] = [Store.state.loginUserName];
@@ -200,6 +198,15 @@ export default class PageAnalysis extends Vue {
   private data: AnalysisData | {} = {};
   private isLoading = false;
 
+  /**
+   * props
+   */
+  @Prop({ type: String, default: '' })
+  private page!: string;
+
+  /**
+   * methods
+   */
   private handleSubmit(e: UIEvent): void {
     e.preventDefault();
     this.renderAnalysis();

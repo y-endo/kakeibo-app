@@ -19,15 +19,27 @@ import Store from '@/ts/Store/index';
 
 @Component
 export default class GlobalHeader extends Vue {
+  /**
+   * data
+   */
   private isModalOpen = false;
 
+  /**
+   * props
+   */
   @Prop({ type: String, default: '' })
   private page!: string;
 
+  /**
+   * lifecycle hook
+   */
   created(): void {
     EventEmitter.on('SET_IS_MODAL_OPEN', this.changeIsModalOpen);
   }
 
+  /**
+   * methods
+   */
   handleClickSearch(e: UIEvent): void {
     const currentTarget = e.currentTarget;
     if (currentTarget === null) return;

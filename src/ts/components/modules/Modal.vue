@@ -55,6 +55,9 @@ type EditDataType = {
   }
 })
 export default class ModuleModal extends Vue {
+  /**
+   * props
+   */
   @Prop({ type: Boolean, default: true })
   private isInputFormWatchEnable!: boolean;
 
@@ -82,6 +85,9 @@ export default class ModuleModal extends Vue {
   })
   private editData!: EditDataType;
 
+  /**
+   * emit
+   */
   @Emit('close-modal')
   private emitCloseModal(): void {
     return;
@@ -127,6 +133,9 @@ export default class ModuleModal extends Vue {
     return value;
   }
 
+  /**
+   * methods
+   */
   handleClick(): void {
     Store.setIsModalOpen(false);
     this.emitCloseModal();

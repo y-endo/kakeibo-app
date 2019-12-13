@@ -65,9 +65,9 @@ type ExpenditureType = {
   }
 })
 export default class PageHome extends Vue {
-  @Prop({ type: String, default: '' })
-  private page!: string;
-
+  /**
+   * data
+   */
   private today = moment().format('YYYY-MM-DD');
   private expenditure: ExpenditureType = {
     day: {
@@ -98,10 +98,22 @@ export default class PageHome extends Vue {
   private selected = 'all';
   private isLoading = true;
 
+  /**
+   * props
+   */
+  @Prop({ type: String, default: '' })
+  private page!: string;
+
+  /**
+   * lifecycle hook
+   */
   created(): void {
     EventEmitter.on('DATABASE_HOME_UPDATE', this.getHomeData);
   }
 
+  /**
+   * methods
+   */
   getHomeData(): void {
     DataManager.reader.getHomeData().then(data => {
       if (data.day.today !== this.today) {

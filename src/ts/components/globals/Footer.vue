@@ -69,9 +69,15 @@ import Store from '@/ts/Store/index';
 
 @Component
 export default class GlobalFooter extends Vue {
+  /**
+   * props
+   */
   @Prop({ type: String, default: '' })
   private page!: string;
 
+  /**
+   * methods
+   */
   changeTabPanel(e: UIEvent): void {
     const currentTarget = e.currentTarget;
     if (currentTarget === null) return;

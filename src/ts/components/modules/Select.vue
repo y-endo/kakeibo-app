@@ -38,8 +38,14 @@ const classNameSelected = 'select_option-list-item--selected';
 
 @Component
 export default class ModuleSelect extends Vue {
+  /**
+   * data
+   */
   private isFocus = false;
 
+  /**
+   * props
+   */
   @Prop({ type: Boolean, default: () => false })
   private disable!: boolean;
 
@@ -60,6 +66,9 @@ export default class ModuleSelect extends Vue {
     return value;
   }
 
+  /**
+   * computed
+   */
   private get internalValue(): string[] {
     return this.value;
   }
@@ -67,10 +76,16 @@ export default class ModuleSelect extends Vue {
     if (this.value !== newValue) this.emitInput(newValue);
   }
 
+  /**
+   * lifecycle hook
+   */
   created(): void {
     document.addEventListener('click', this.documentClick);
   }
 
+  /**
+   * methods
+   */
   documentClick(e: UIEvent): void {
     const select = (e.target as HTMLElement).closest('.select');
     if (select === null || select !== this.$el) {

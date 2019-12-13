@@ -146,6 +146,9 @@ import Store from '@/ts/Store/index';
   }
 })
 export default class ModuleSearchForm extends Vue {
+  /**
+   * data
+   */
   private startDate = moment()
     .subtract(7, 'days')
     .format('YYYY-MM-DD');
@@ -161,6 +164,9 @@ export default class ModuleSearchForm extends Vue {
   private paymentOptions = ['現金', 'クレジットカード', '振込', 'ポイント', 'ICカード', 'ギフト'];
   private userOptions = ['勇気', '友恵', '生真'];
 
+  /**
+   * computed
+   */
   get subCategoryOptions(): string[] {
     if (this.category.length === 0) return [];
 
@@ -171,16 +177,25 @@ export default class ModuleSearchForm extends Vue {
     return value;
   }
 
+  /**
+   * watch
+   */
   @Watch('category')
   private handleWatchCategory(): void {
     this.subCategory = [];
   }
 
+  /**
+   * emit
+   */
   @Emit('search-query')
   private emitSearchQuery(value: SearchQuery): SearchQuery {
     return value;
   }
 
+  /**
+   * methods
+   */
   handleSubmit(e: Event): void {
     e.preventDefault();
 

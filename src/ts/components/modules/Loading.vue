@@ -15,6 +15,9 @@ import { Component, Prop, Vue } from 'vue-property-decorator';
 
 @Component
 export default class ModuleLoading extends Vue {
+  /**
+   * props
+   */
   @Prop({ type: Boolean, default: true })
   private isShow!: boolean;
 }

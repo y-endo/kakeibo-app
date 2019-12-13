@@ -13,17 +13,26 @@ import Store from '@/ts/Store/index';
 
 @Component
 export default class GlobalMessage extends Vue {
+  /**
+   * data
+   */
   private isShow = false;
   private isError = false;
   private text = '';
   private timerId = -1;
 
+  /**
+   * lifecycle hook
+   */
   created(): void {
     EventEmitter.on('SET_MESSAGE_TEXT', this.changeText);
     EventEmitter.on('SET_IS_MESSAGE_SHOW', this.changeIsShow);
     EventEmitter.on('SET_MESSAGE_TYPE', this.changeType);
   }
 
+  /**
+   * methods
+   */
   changeText(): void {
     this.text = Store.state.messageText;
   }
